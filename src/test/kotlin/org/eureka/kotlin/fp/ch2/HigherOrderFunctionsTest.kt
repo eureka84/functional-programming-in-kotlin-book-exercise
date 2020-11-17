@@ -1,18 +1,18 @@
 package org.eureka.kotlin.fp.ch2
 
-import org.eureka.kotlin.fp.ch2.HOF.isSorted
+import org.eureka.kotlin.fp.ch2.HigherOrderFunctions.isSorted
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class HOFTest {
+class HigherOrderFunctionsTest {
 
     private val unusedOrder: (Int, Int) -> Boolean = { _, _ -> true }
 
     @Test
     fun `isSorted - empty list`() {
         assertTrue {
-            isSorted(listOf<Int>(), unusedOrder)
+            isSorted(listOf(), unusedOrder)
         }
     }
 

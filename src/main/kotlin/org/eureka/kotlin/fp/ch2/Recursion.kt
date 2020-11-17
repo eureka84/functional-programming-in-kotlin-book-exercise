@@ -1,6 +1,6 @@
 package org.eureka.kotlin.fp.ch2
 
-object `2_1_Recursion` {
+object Recursion {
 
     fun fibonacci(n: Int): Int {
         tailrec fun loop(n: Int, last: Int, secondToLast: Int): Int =
