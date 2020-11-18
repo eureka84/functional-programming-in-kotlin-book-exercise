@@ -5,6 +5,7 @@ import assertk.assertions.hasMessage
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
 import org.eureka.kotlin.fp.ch3.List.Companion.drop
+import org.eureka.kotlin.fp.ch3.List.Companion.dropWhile
 import org.eureka.kotlin.fp.ch3.List.Companion.of
 import org.eureka.kotlin.fp.ch3.List.Companion.setHead
 import org.eureka.kotlin.fp.ch3.List.Companion.tail
@@ -42,5 +43,15 @@ class ListTest {
     @Test
     fun `drop n elements from a non empty list`() {
         assertThat(drop(of(1, 2, 3, 4), 2)).isEqualTo(of(3, 4))
+    }
+
+    @Test
+    fun `drop while on an empty list`() {
+        assertThat { dropWhile(Nil) { true } }.isFailure().hasMessage("Dropping elements from an empty list")
+    }
+
+    @Test
+    fun `drop while on non empty list`() {
+        assertThat(dropWhile(of(1, 2, 3, 4)){ n -> n < 3}).isEqualTo(List.of(3, 4))
     }
 }

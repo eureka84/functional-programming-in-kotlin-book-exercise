@@ -26,6 +26,11 @@ sealed class List<out A> {
             is Nil -> throw UnsupportedOperationException("Dropping elements from an empty list")
             is Cons ->  if (n ==0) l else drop(l.tail, n -1)
         }
+
+        tailrec fun <A> dropWhile(l: List<A>, f: (A) -> Boolean): List<A> = when(l) {
+            is Nil -> throw UnsupportedOperationException("Dropping elements from an empty list")
+            is Cons -> if (f(l.head)) dropWhile(l.tail, f) else l
+        }
     }
 }
 
