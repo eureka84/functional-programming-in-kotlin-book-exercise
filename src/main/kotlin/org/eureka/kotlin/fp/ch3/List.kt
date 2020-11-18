@@ -21,6 +21,11 @@ sealed class List<out A> {
             is Nil -> of(x)
             is Cons -> Cons(x, xs.tail)
         }
+
+        tailrec fun <A> drop(l: List<A>, n: Int): List<A> = when (l) {
+            is Nil -> throw UnsupportedOperationException("Dropping elements from an empty list")
+            is Cons ->  if (n ==0) l else drop(l.tail, n -1)
+        }
     }
 }
 
