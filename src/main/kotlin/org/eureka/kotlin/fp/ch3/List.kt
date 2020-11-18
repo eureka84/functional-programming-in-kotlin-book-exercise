@@ -16,6 +16,11 @@ sealed class List<out A> {
             is Nil -> throw UnsupportedOperationException("Tail of an empty list")
             is Cons -> xs.tail
         }
+
+        fun <A> setHead(xs: List<A>, x: A): List<A> = when (xs) {
+            is Nil -> of(x)
+            is Cons -> Cons(x, xs.tail)
+        }
     }
 }
 
