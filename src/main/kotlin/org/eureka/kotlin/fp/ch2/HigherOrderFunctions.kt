@@ -9,14 +9,14 @@ object HigherOrderFunctions {
         get() = first()
 
     fun <A> isSorted(aa: List<A>, order: (A, A) -> Boolean): Boolean {
-        tailrec fun loop (a: A, b: A, remainder: List<A>): Boolean =
+        tailrec fun loop(a: A, remainder: List<A>): Boolean =
             when {
-                remainder.isEmpty() -> order(a,b)
-                order(a,b)          -> loop(b, remainder.head, remainder.tail)
-                else                -> false
+                remainder.isEmpty()         -> true
+                !order(a, remainder.head)   -> false
+                else                        -> loop(remainder.head, remainder.tail)
             }
 
-        return (aa.isEmpty() || aa.size == 1) || loop(aa.head, aa.tail.head, aa.tail.tail)
+        return aa.isEmpty() || loop(aa.head, aa.tail)
     }
 
 }
