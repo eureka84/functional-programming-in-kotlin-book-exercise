@@ -6,7 +6,10 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
 import org.eureka.kotlin.fp.ch3.List.Companion.drop
 import org.eureka.kotlin.fp.ch3.List.Companion.dropWhile
+import org.eureka.kotlin.fp.ch3.List.Companion.empty
+import org.eureka.kotlin.fp.ch3.List.Companion.foldRight
 import org.eureka.kotlin.fp.ch3.List.Companion.init
+import org.eureka.kotlin.fp.ch3.List.Companion.length
 import org.eureka.kotlin.fp.ch3.List.Companion.of
 import org.eureka.kotlin.fp.ch3.List.Companion.setHead
 import org.eureka.kotlin.fp.ch3.List.Companion.tail
@@ -28,7 +31,7 @@ class ListTest {
 
     @Test
     fun `set head of an empty list`() {
-        assertThat { setHead(Nil, 1) }.isFailure().hasMessage("Cannot replace `head` of a Nil list")
+        assertThat { setHead(empty(), 1) }.isFailure().hasMessage("Cannot replace `head` of a Nil list")
     }
 
     @Test
@@ -48,7 +51,7 @@ class ListTest {
 
     @Test
     fun `drop while on an empty list`() {
-        assertThat(dropWhile(Nil) { true }).isEqualTo(Nil)
+        assertThat(dropWhile(Nil) { true }).isEqualTo(empty())
     }
 
     @Test
@@ -64,5 +67,25 @@ class ListTest {
     @Test
     fun `init of a non empty list`() {
         assertThat(init(of(1, 2, 3, 4, 5))).isEqualTo(of(1, 2, 3, 4))
+    }
+
+    @Test
+    fun `fold a list using Cons`() {
+        val reversed = foldRight(
+            of(1, 2, 3),
+            List.empty<Int>(),
+            { x, y -> Cons(x, y) })
+
+        assertThat(reversed).isEqualTo(of(1, 2, 3))
+    }
+
+    @Test
+    fun `length of an empty string`() {
+        assertThat(length(Nil)).isEqualTo(0)
+    }
+
+    @Test
+    fun `length of a non empty string`() {
+        assertThat(length(of(1, 2, 3,4))).isEqualTo(4)
     }
 }
