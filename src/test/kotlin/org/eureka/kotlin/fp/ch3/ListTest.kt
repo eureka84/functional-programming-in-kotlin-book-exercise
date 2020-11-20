@@ -7,6 +7,7 @@ import assertk.assertions.isFailure
 import org.eureka.kotlin.fp.ch3.List.Companion.drop
 import org.eureka.kotlin.fp.ch3.List.Companion.dropWhile
 import org.eureka.kotlin.fp.ch3.List.Companion.empty
+import org.eureka.kotlin.fp.ch3.List.Companion.foldLeft
 import org.eureka.kotlin.fp.ch3.List.Companion.foldRight
 import org.eureka.kotlin.fp.ch3.List.Companion.init
 import org.eureka.kotlin.fp.ch3.List.Companion.length
@@ -71,12 +72,19 @@ class ListTest {
 
     @Test
     fun `fold a list using Cons`() {
-        val reversed = foldRight(
-            of(1, 2, 3),
-            List.empty<Int>(),
-            { x, y -> Cons(x, y) })
+        assertThat(
+            foldRight(
+                of(1, 2, 3),
+                empty<Int>(),
+                { x, y -> Cons(x, y) })
+        ).isEqualTo(of(1, 2, 3))
 
-        assertThat(reversed).isEqualTo(of(1, 2, 3))
+        assertThat(
+            foldLeft(
+                of(1, 2, 3),
+                empty<Int>(),
+                { x, y -> Cons(y, x) })
+        ).isEqualTo(of(3, 2, 1))
     }
 
     @Test

@@ -20,7 +20,12 @@ sealed class List<out A> {
                 is Cons -> f(xs.head, foldRight(xs.tail, z, f))
             }
 
-        fun <A> length(xs: List<A>): Int = foldRight(xs, 0) {_, acc -> acc +1}
+        tailrec fun <A, B> foldLeft(xs: List<A>, z: B, f: (B, A) -> B): B = when (xs) {
+            is Nil -> z
+            is Cons -> foldLeft(xs.tail, f(z, xs.head), f)
+        }
+
+        fun <A> length(xs: List<A>): Int = foldLeft(xs, 0) { acc, _ -> acc + 1 }
 
         fun <A> tail(xs: List<A>): List<A> = when (xs) {
             is Nil -> throw UnsupportedOperationException("Tail of an empty list")
