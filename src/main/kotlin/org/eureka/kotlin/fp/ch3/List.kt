@@ -25,6 +25,8 @@ sealed class List<out A> {
             is Cons -> foldLeft(xs.tail, f(z, xs.head), f)
         }
 
+        fun <A> reverse(xs: List<A>): List<A> = foldLeft(xs, empty()) { acc, el -> Cons(el, acc)}
+
         fun <A> length(xs: List<A>): Int = foldLeft(xs, 0) { acc, _ -> acc + 1 }
 
         fun <A> tail(xs: List<A>): List<A> = when (xs) {

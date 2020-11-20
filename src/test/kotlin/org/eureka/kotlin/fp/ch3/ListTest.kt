@@ -12,6 +12,7 @@ import org.eureka.kotlin.fp.ch3.List.Companion.foldRight
 import org.eureka.kotlin.fp.ch3.List.Companion.init
 import org.eureka.kotlin.fp.ch3.List.Companion.length
 import org.eureka.kotlin.fp.ch3.List.Companion.of
+import org.eureka.kotlin.fp.ch3.List.Companion.reverse
 import org.eureka.kotlin.fp.ch3.List.Companion.setHead
 import org.eureka.kotlin.fp.ch3.List.Companion.tail
 import org.junit.Test
@@ -95,5 +96,11 @@ class ListTest {
     @Test
     fun `length of a non empty string`() {
         assertThat(length(of(1, 2, 3,4))).isEqualTo(4)
+    }
+
+    @Test
+    fun `reverse a list`() {
+        assertThat(reverse(Nil)).isEqualTo(empty())
+        assertThat(reverse(of(1, 2, 3))).isEqualTo(of(3, 2, 1))
     }
 }
