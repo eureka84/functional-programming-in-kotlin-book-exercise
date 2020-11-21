@@ -13,6 +13,7 @@ import org.eureka.kotlin.fp.ch3.List.Companion.foldLeft
 import org.eureka.kotlin.fp.ch3.List.Companion.foldRight
 import org.eureka.kotlin.fp.ch3.List.Companion.init
 import org.eureka.kotlin.fp.ch3.List.Companion.length
+import org.eureka.kotlin.fp.ch3.List.Companion.map
 import org.eureka.kotlin.fp.ch3.List.Companion.of
 import org.eureka.kotlin.fp.ch3.List.Companion.reverse
 import org.eureka.kotlin.fp.ch3.List.Companion.setHead
@@ -115,5 +116,10 @@ class ListTest {
     @Test
     fun `concatenate test`() {
         assertThat(concatenate(of(of(1, 2), of(3, 4), of(5, 6)))).isEqualTo(of(1, 2, 3, 4, 5, 6))
+    }
+
+    @Test
+    fun `map test`() {
+        assertThat(map(of(1, 2, 3)){ x -> x +1}).isEqualTo(of(2, 3, 4))
     }
 }
