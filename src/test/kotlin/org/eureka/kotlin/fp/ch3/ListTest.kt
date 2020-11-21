@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.hasMessage
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
+import org.eureka.kotlin.fp.ch3.List.Companion.append
 import org.eureka.kotlin.fp.ch3.List.Companion.drop
 import org.eureka.kotlin.fp.ch3.List.Companion.dropWhile
 import org.eureka.kotlin.fp.ch3.List.Companion.empty
@@ -103,4 +104,11 @@ class ListTest {
         assertThat(reverse(Nil)).isEqualTo(empty())
         assertThat(reverse(of(1, 2, 3))).isEqualTo(of(3, 2, 1))
     }
+
+    @Test
+    fun `append element to a list`() {
+        assertThat(append(Nil, 1)).isEqualTo(of(1))
+        assertThat(append(of(1, 2, 3), 4)).isEqualTo(of(1,2, 3, 4))
+    }
+
 }

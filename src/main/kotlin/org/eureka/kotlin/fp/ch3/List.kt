@@ -20,12 +20,39 @@ sealed class List<out A> {
                 is Cons -> f(xs.head, foldRight(xs.tail, z, f))
             }
 
-        tailrec fun <A, B> foldLeft(xs: List<A>, z: B, f: (B, A) -> B): B = when (xs) {
-            is Nil -> z
-            is Cons -> foldLeft(xs.tail, f(z, xs.head), f)
-        }
+        fun <A, B> foldRightL(xs: List<A>, z: B, f: (A, B) -> B): B =
+            foldLeft(xs,
+                { b: B -> b },
+                { g, a ->
+                    { b ->
+                        g(f(a, b))
+                    }
+                })(z)
 
-        fun <A> reverse(xs: List<A>): List<A> = foldLeft(xs, empty()) { acc, el -> Cons(el, acc)}
+        tailrec fun <A, B> foldLeft(xs: List<A>, z: B, f: (B, A) -> B): B =
+            when (xs) {
+                is Nil -> z
+                is Cons -> foldLeft(xs.tail, f(z, xs.head), f)
+            }
+
+        fun <A, B> foldLeftR(xs: List<A>, z: B, f: (B, A) -> B): B =
+            foldRight(
+                xs,
+                { b: B -> b },
+                { a, g ->
+                    { b ->
+                        g(f(b, a))
+                    }
+                })(z)
+
+        fun <A> append(xs: List<A>, a: A): List<A> =
+            foldRightL(xs, of(a)) { el, acc -> Cons(el, acc) }
+//            when (xs) {
+//                is Nil -> of(a)
+//                is Cons -> Cons(xs.head, append(xs.tail, a))
+//            }
+
+        fun <A> reverse(xs: List<A>): List<A> = foldLeft(xs, empty()) { acc, el -> Cons(el, acc) }
 
         fun <A> length(xs: List<A>): Int = foldLeft(xs, 0) { acc, _ -> acc + 1 }
 
@@ -60,6 +87,7 @@ sealed class List<out A> {
             is Nil ->
                 throw IllegalStateException("Cannot init Nil list")
         }
+
     }
 }
 
