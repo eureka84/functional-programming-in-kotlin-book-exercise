@@ -5,6 +5,7 @@ import assertk.assertions.hasMessage
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
 import org.eureka.kotlin.fp.ch3.List.Companion.append
+import org.eureka.kotlin.fp.ch3.List.Companion.concatenate
 import org.eureka.kotlin.fp.ch3.List.Companion.drop
 import org.eureka.kotlin.fp.ch3.List.Companion.dropWhile
 import org.eureka.kotlin.fp.ch3.List.Companion.empty
@@ -106,9 +107,13 @@ class ListTest {
     }
 
     @Test
-    fun `append element to a list`() {
-        assertThat(append(Nil, 1)).isEqualTo(of(1))
-        assertThat(append(of(1, 2, 3), 4)).isEqualTo(of(1,2, 3, 4))
+    fun `append to a list`() {
+        assertThat(append(Nil, of(1))).isEqualTo(of(1))
+        assertThat(append(of(1, 2, 3), of(4, 5))).isEqualTo(of(1,2, 3, 4, 5))
     }
 
+    @Test
+    fun `concatenate test`() {
+        assertThat(concatenate(of(of(1, 2), of(3, 4), of(5, 6)))).isEqualTo(of(1, 2, 3, 4, 5, 6))
+    }
 }
