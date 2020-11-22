@@ -20,6 +20,7 @@ import org.eureka.kotlin.fp.ch3.List.Companion.of
 import org.eureka.kotlin.fp.ch3.List.Companion.reverse
 import org.eureka.kotlin.fp.ch3.List.Companion.setHead
 import org.eureka.kotlin.fp.ch3.List.Companion.tail
+import org.eureka.kotlin.fp.ch3.List.Companion.zipWith
 import org.junit.Test
 
 class ListTest {
@@ -133,5 +134,10 @@ class ListTest {
     @Test
     fun `flatMap on a list`() {
         assertThat(flatMap(of(1, 2, 3)) { i -> of(i, i) }).isEqualTo(of(1, 1, 2, 2, 3, 3))
+    }
+
+    @Test
+    fun `zipWith test`() {
+        assertThat(zipWith(of(1, 2,3), of(4, 5, 6)){ a, b -> a + b}).isEqualTo(of(5, 7, 9))
     }
 }
