@@ -153,5 +153,7 @@ class ListTest {
         assertTrue(hasSubsequence(of(1, 2, 3, 4), of(2, 3)))
         assertFalse(hasSubsequence(Nil, of(1, 2)))
         assertFalse(hasSubsequence(of(1, 2, 3, 4), of(5, 6)))
+
+        assertTrue(hasSubsequence(of(1, 2, 3, 4, 5), of(2, 5)))
     }
 }
