@@ -21,13 +21,15 @@ sealed class List<out A> {
             }
 
         fun <A, B> foldRightL(xs: List<A>, z: B, f: (A, B) -> B): B =
-            foldLeft(xs,
+            foldLeft(
+                xs,
                 { b: B -> b },
-                { g, a ->
-                    { b ->
+                { g: (B) -> B, a: A ->
+                    { b: B ->
                         g(f(a, b))
                     }
-                })(z)
+                }
+            )(z)
 
         tailrec fun <A, B> foldLeft(xs: List<A>, z: B, f: (B, A) -> B): B =
             when (xs) {
@@ -39,11 +41,12 @@ sealed class List<out A> {
             foldRight(
                 xs,
                 { b: B -> b },
-                { a, g ->
-                    { b ->
+                { a: A, g: (B) -> B ->
+                    { b: B ->
                         g(f(b, a))
                     }
-                })(z)
+                }
+            )(z)
 
         fun <A, B> map(xs: List<A>, f: (A) -> B): List<B> = foldRight(xs, empty()) { curr, acc -> Cons(f(curr), acc) }
 
