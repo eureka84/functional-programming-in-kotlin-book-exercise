@@ -50,6 +50,8 @@ sealed class List<out A> {
 
         fun <A, B> map(xs: List<A>, f: (A) -> B): List<B> = foldRight(xs, empty()) { curr, acc -> Cons(f(curr), acc) }
 
+        fun <A, B> flatMap(xa: List<A>, f: (A) -> List<B>): List<B> = concatenate(map(xa, f))
+
         fun <A> filter(xs: List<A>, f: (A) -> Boolean): List<A> =
             foldRight(xs, empty()) { el, acc ->
                 if (f(el)) Cons(el, acc) else acc
