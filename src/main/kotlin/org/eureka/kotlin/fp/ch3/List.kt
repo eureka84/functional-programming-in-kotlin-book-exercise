@@ -108,6 +108,18 @@ sealed class List<out A> {
             }
         }
 
+        tailrec fun <A> hasSubsequence(xs: List<A>, ys: List<A>): Boolean = when (xs) {
+            is Nil -> length(ys) == 0
+            is Cons -> when (ys) {
+                is Nil -> true
+                is Cons ->
+                    if (xs.head == ys.head)
+                        hasSubsequence(xs.tail, ys.tail)
+                    else
+                        hasSubsequence(xs.tail, ys)
+            }
+        }
+
     }
 }
 

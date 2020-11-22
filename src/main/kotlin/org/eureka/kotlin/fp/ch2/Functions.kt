@@ -1,5 +1,9 @@
 package org.eureka.kotlin.fp.ch2
 
+typealias Function<A, B> = (A) -> B
+
+infix fun <A, B, C> Function<A, B>.andThen(g: Function<B, C>): Function<A, C> = { a: A -> g(this(a)) }
+
 object Functions {
 
     fun <A, B, C> partial(a: A, f: (A, B) -> C): (B) -> C = { b -> f(a, b) }

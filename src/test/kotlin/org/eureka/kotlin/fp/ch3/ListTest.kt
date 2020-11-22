@@ -4,6 +4,8 @@ import assertk.assertThat
 import assertk.assertions.hasMessage
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
+import junit.framework.Assert.assertFalse
+import junit.framework.Assert.assertTrue
 import org.eureka.kotlin.fp.ch3.List.Companion.append
 import org.eureka.kotlin.fp.ch3.List.Companion.concatenate
 import org.eureka.kotlin.fp.ch3.List.Companion.drop
@@ -13,6 +15,7 @@ import org.eureka.kotlin.fp.ch3.List.Companion.filter
 import org.eureka.kotlin.fp.ch3.List.Companion.flatMap
 import org.eureka.kotlin.fp.ch3.List.Companion.foldLeft
 import org.eureka.kotlin.fp.ch3.List.Companion.foldRight
+import org.eureka.kotlin.fp.ch3.List.Companion.hasSubsequence
 import org.eureka.kotlin.fp.ch3.List.Companion.init
 import org.eureka.kotlin.fp.ch3.List.Companion.length
 import org.eureka.kotlin.fp.ch3.List.Companion.map
@@ -101,7 +104,7 @@ class ListTest {
 
     @Test
     fun `length of a non empty string`() {
-        assertThat(length(of(1, 2, 3,4))).isEqualTo(4)
+        assertThat(length(of(1, 2, 3, 4))).isEqualTo(4)
     }
 
     @Test
@@ -113,7 +116,7 @@ class ListTest {
     @Test
     fun `append to a list`() {
         assertThat(append(Nil, of(1))).isEqualTo(of(1))
-        assertThat(append(of(1, 2, 3), of(4, 5))).isEqualTo(of(1,2, 3, 4, 5))
+        assertThat(append(of(1, 2, 3), of(4, 5))).isEqualTo(of(1, 2, 3, 4, 5))
     }
 
     @Test
@@ -123,12 +126,12 @@ class ListTest {
 
     @Test
     fun `map test`() {
-        assertThat(map(of(1, 2, 3)){ x -> x +1}).isEqualTo(of(2, 3, 4))
+        assertThat(map(of(1, 2, 3)) { x -> x + 1 }).isEqualTo(of(2, 3, 4))
     }
 
     @Test
     fun `filter elements out of  a list`() {
-        assertThat(filter(of(1, 2, 3, 4)){it % 2==0}).isEqualTo(of(2, 4))
+        assertThat(filter(of(1, 2, 3, 4)) { it % 2 == 0 }).isEqualTo(of(2, 4))
     }
 
     @Test
@@ -138,6 +141,16 @@ class ListTest {
 
     @Test
     fun `zipWith test`() {
-        assertThat(zipWith(of(1, 2,3), of(4, 5, 6)){ a, b -> a + b}).isEqualTo(of(5, 7, 9))
+        assertThat(zipWith(of(1, 2, 3), of(4, 5, 6)) { a, b -> a + b }).isEqualTo(of(5, 7, 9))
+    }
+
+    @Test
+    fun `has subsequence test`() {
+        assertTrue(hasSubsequence(of(1, 2, 3, 4), of(1, 2)))
+        assertTrue(hasSubsequence(of(1, 2, 3, 4), Nil))
+        assertTrue(hasSubsequence(Nil, Nil))
+        assertTrue(hasSubsequence(of(1, 2, 3, 4), of(2, 3)))
+        assertFalse(hasSubsequence(Nil, of(1, 2)))
+        assertFalse(hasSubsequence(of(1, 2, 3, 4), of(5, 6)))
     }
 }
