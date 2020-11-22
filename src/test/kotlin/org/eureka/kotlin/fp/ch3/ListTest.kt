@@ -4,8 +4,6 @@ import assertk.assertThat
 import assertk.assertions.hasMessage
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
 import org.eureka.kotlin.fp.ch3.List.Companion.append
 import org.eureka.kotlin.fp.ch3.List.Companion.concatenate
 import org.eureka.kotlin.fp.ch3.List.Companion.drop
@@ -25,6 +23,8 @@ import org.eureka.kotlin.fp.ch3.List.Companion.setHead
 import org.eureka.kotlin.fp.ch3.List.Companion.tail
 import org.eureka.kotlin.fp.ch3.List.Companion.zipWith
 import org.junit.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ListTest {
 
