@@ -142,6 +142,7 @@ class ListTest {
     @Test
     fun `zipWith test`() {
         assertThat(zipWith(of(1, 2, 3), of(4, 5, 6)) { a, b -> a + b }).isEqualTo(of(5, 7, 9))
+        assertThat(zipWith(of(1, 2, 3), of(4, 5, 6, 7)) { a, b -> a + b }).isEqualTo(of(5, 7, 9))
     }
 
     @Test
