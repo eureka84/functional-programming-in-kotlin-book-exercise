@@ -9,6 +9,7 @@ import org.eureka.kotlin.fp.ch3.List.Companion.concatenate
 import org.eureka.kotlin.fp.ch3.List.Companion.drop
 import org.eureka.kotlin.fp.ch3.List.Companion.dropWhile
 import org.eureka.kotlin.fp.ch3.List.Companion.empty
+import org.eureka.kotlin.fp.ch3.List.Companion.filter
 import org.eureka.kotlin.fp.ch3.List.Companion.foldLeft
 import org.eureka.kotlin.fp.ch3.List.Companion.foldRight
 import org.eureka.kotlin.fp.ch3.List.Companion.init
@@ -121,5 +122,10 @@ class ListTest {
     @Test
     fun `map test`() {
         assertThat(map(of(1, 2, 3)){ x -> x +1}).isEqualTo(of(2, 3, 4))
+    }
+
+    @Test
+    fun `filter elements out of  a list`() {
+        assertThat(filter(of(1, 2, 3, 4)){it % 2==0}).isEqualTo(of(2, 4))
     }
 }

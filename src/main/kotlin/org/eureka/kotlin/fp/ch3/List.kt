@@ -50,11 +50,16 @@ sealed class List<out A> {
 
         fun <A, B> map(xs: List<A>, f: (A) -> B): List<B> = foldRight(xs, empty()) { curr, acc -> Cons(f(curr), acc) }
 
+        fun <A> filter(xs: List<A>, f: (A) -> Boolean): List<A> =
+            foldRight(xs, empty()) { el, acc ->
+                if (f(el)) Cons(el, acc) else acc
+            }
+
         fun <A> append(l1: List<A>, l2: List<A>): List<A> =
             foldRightL(l1, l2) { el, acc -> Cons(el, acc) }
 
         fun <A> concatenate(xss: List<List<A>>): List<A> =
-            foldRight(xss, empty()) { curr, acc -> append(curr, acc) }
+            foldRightL(xss, empty()) { curr, acc -> append(curr, acc) }
 
         fun <A> reverse(xs: List<A>): List<A> = foldLeft(xs, empty()) { acc, el -> Cons(el, acc) }
 
