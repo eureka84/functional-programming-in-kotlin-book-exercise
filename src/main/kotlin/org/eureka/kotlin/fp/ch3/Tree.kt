@@ -5,13 +5,18 @@ sealed class Tree<out A> {
     companion object {
 
         fun <A> size(t: Tree<A>): Int = when (t) {
-            is Leaf -> 1
+                is Leaf -> 1
             is Branch -> 1 + size(t.left) + size(t.right)
         }
 
         fun maximum(t: Tree<Int>): Int = when (t) {
             is Leaf -> t.value
             is Branch -> maxOf(maximum(t.left), maximum(t.right))
+        }
+
+        fun <A> depth(t:Tree<A>): Int = when (t) {
+            is Leaf -> 1
+            is Branch -> 1 + maxOf(depth(t.left), depth(t.right))
         }
 
     }
