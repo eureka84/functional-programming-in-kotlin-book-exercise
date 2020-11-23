@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.eureka.kotlin.fp.ch4.Option.Companion.empty
 import org.eureka.kotlin.fp.ch4.Option.Companion.lift
+import org.eureka.kotlin.fp.ch4.Option.Companion.map2
 import org.eureka.kotlin.fp.ch4.Option.Companion.of
 import org.junit.Test
 
@@ -57,5 +58,12 @@ class OptionTest {
         val add1Opt: (Option<Int>) -> Option<Int> = lift(add1)
 
         assertThat(add1Opt(of(1))).isEqualTo(of(2))
+    }
+
+    @Test
+    fun `map2 test`() {
+        val add: (Int, Int) -> Int = { a, b -> a + b }
+
+        assertThat(map2(of(2), of(3), add)).isEqualTo(of(5))
     }
 }

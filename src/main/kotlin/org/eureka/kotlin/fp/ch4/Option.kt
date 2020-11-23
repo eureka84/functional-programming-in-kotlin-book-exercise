@@ -5,6 +5,8 @@ sealed class Option<out A> {
         fun <A> of(a: A): Option<A> = Some(a)
         fun <A> empty(): Option<A> = None
         fun <A, B> lift(f: (A) -> B): (Option<A>) -> Option<B> = { oa -> oa.map(f) }
+        fun <A, B, C> map2(a: Option<A>, b: Option<B>, f: (A, B) -> C): Option<C> =
+            a.flatMap { aVal -> b.map { bVal -> f(aVal, bVal) } }
     }
 }
 data class Some<out A>(val get: A) : Option<A>()
