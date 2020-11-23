@@ -6,6 +6,7 @@ import org.eureka.kotlin.fp.ch4.Option.Companion.empty
 import org.eureka.kotlin.fp.ch4.Option.Companion.lift
 import org.eureka.kotlin.fp.ch4.Option.Companion.map2
 import org.eureka.kotlin.fp.ch4.Option.Companion.of
+import org.eureka.kotlin.fp.ch4.Option.Companion.sequence
 import org.junit.Test
 
 class OptionTest {
@@ -65,5 +66,11 @@ class OptionTest {
         val add: (Int, Int) -> Int = { a, b -> a + b }
 
         assertThat(map2(of(2), of(3), add)).isEqualTo(of(5))
+    }
+
+    @Test
+    fun `sequence test`() {
+        assertThat(sequence(listOf(of(1), of(2), of(3)))).isEqualTo(of(listOf(1, 2, 3)))
+        assertThat(sequence(listOf(of(1), empty(), of(3)))).isEqualTo(empty())
     }
 }
