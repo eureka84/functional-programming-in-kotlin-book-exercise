@@ -7,8 +7,14 @@ sealed class Option<out A> {
         fun <A, B> lift(f: (A) -> B): (Option<A>) -> Option<B> = { oa -> oa.map(f) }
         fun <A, B, C> map2(a: Option<A>, b: Option<B>, f: (A, B) -> C): Option<C> =
             a.flatMap { aVal -> b.map { bVal -> f(aVal, bVal) } }
+
         fun <A> sequence(xs: List<Option<A>>): Option<List<A>> =
-            xs.fold(of(listOf())) { option, acc -> map2(option, acc) { list, a -> list + a } }
+            traverse(xs) { it }
+
+        fun <A, B> traverse(
+            xa: List<A>,
+            f: (A) -> Option<B>
+        ): Option<List<B>> = xa.fold(of(listOf())) { acc, a -> map2(acc, f(a)) { list, b -> list + b } }
     }
 }
 
