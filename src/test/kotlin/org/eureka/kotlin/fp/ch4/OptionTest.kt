@@ -2,6 +2,7 @@ package org.eureka.kotlin.fp.ch4
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch4.Option.Companion.empty
 import org.eureka.kotlin.fp.ch4.Option.Companion.lift
 import org.eureka.kotlin.fp.ch4.Option.Companion.map2
@@ -70,7 +71,7 @@ class OptionTest {
 
     @Test
     fun `sequence test`() {
-        assertThat(sequence(listOf(of(1), of(2), of(3)))).isEqualTo(of(listOf(1, 2, 3)))
-        assertThat(sequence(listOf(of(1), empty(), of(3)))).isEqualTo(empty())
+        assertThat(sequence(List.of(of(1), of(2), of(3)))).isEqualTo(of(List.of(1, 2, 3)))
+        assertThat(sequence(List.of(of(1), empty(), of(3)))).isEqualTo(empty())
     }
 }
