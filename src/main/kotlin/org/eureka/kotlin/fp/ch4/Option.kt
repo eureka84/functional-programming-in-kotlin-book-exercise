@@ -3,6 +3,7 @@ package org.eureka.kotlin.fp.ch4
 import org.eureka.kotlin.fp.ch3.Cons
 import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch3.List.Companion.foldRight
+import java.lang.Exception
 
 sealed class Option<out A> {
     companion object {
@@ -19,6 +20,13 @@ sealed class Option<out A> {
             xa: List<A>,
             f: (A) -> Option<B>
         ): Option<List<B>> = foldRight(xa, of(List.empty())) { a, acc -> map2(acc, f(a)) { list, b -> Cons(b, list) } }
+
+        fun <A> catches(supplier: ()->A): Option<A> =
+            try {
+                of(supplier())
+            } catch (e: Exception) {
+                empty()
+            }
     }
 }
 

@@ -3,11 +3,13 @@ package org.eureka.kotlin.fp.ch4
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.eureka.kotlin.fp.ch3.List
+import org.eureka.kotlin.fp.ch4.Option.Companion.catches
 import org.eureka.kotlin.fp.ch4.Option.Companion.empty
 import org.eureka.kotlin.fp.ch4.Option.Companion.lift
 import org.eureka.kotlin.fp.ch4.Option.Companion.map2
 import org.eureka.kotlin.fp.ch4.Option.Companion.of
 import org.eureka.kotlin.fp.ch4.Option.Companion.sequence
+import org.eureka.kotlin.fp.ch4.Option.Companion.traverse
 import org.junit.Test
 
 class OptionTest {
@@ -73,5 +75,15 @@ class OptionTest {
     fun `sequence test`() {
         assertThat(sequence(List.of(of(1), of(2), of(3)))).isEqualTo(of(List.of(1, 2, 3)))
         assertThat(sequence(List.of(of(1), empty(), of(3)))).isEqualTo(empty())
+    }
+
+    @Test
+    fun `traverse test`() {
+        val xa = List.of(1, 2, 4)
+        val xb = List.of(0, 2, 4)
+        val f: (Int) -> Option<Int> = { n -> catches {  1 / n } }
+
+        assertThat(traverse(xa, f)).isEqualTo(of(List.of(1, 0, 0)))
+        assertThat(traverse(xb, f)).isEqualTo(empty())
     }
 }
