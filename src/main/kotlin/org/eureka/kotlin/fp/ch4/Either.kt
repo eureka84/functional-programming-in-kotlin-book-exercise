@@ -1,5 +1,8 @@
 package org.eureka.kotlin.fp.ch4
 
+import org.eureka.kotlin.fp.ch3.Cons
+import org.eureka.kotlin.fp.ch3.List
+
 sealed class Either<out E, out A> {
     companion object {
         fun <E, A> left(e: E): Either<E, A> = Left(e)
@@ -17,6 +20,16 @@ sealed class Either<out E, out A> {
             } catch (e: Exception) {
                 left(e)
             }
+
+        fun <E, A> sequence(xs: List<Either<E,A>>): Either<E, List<A>> =
+            traverse(xs) { it }
+
+        fun <E, A, B> traverse(
+            xa: List<A>,
+            f: (A) -> Either<E, B>
+        ): Either<E, List<B>> = List.foldRight(xa, right(List.empty())) { a, acc ->
+            map2(acc, f(a)) { list, b -> Cons(b, list) }
+        }
     }
 
 }
