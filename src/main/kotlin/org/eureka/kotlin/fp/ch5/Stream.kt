@@ -14,6 +14,7 @@ sealed class Stream<out A> {
             val tail: Stream<A> by lazy(tl)
             return Cons({ head }, { tail })
         }
+
         fun <A> empty(): Stream<A> = Empty
 
         fun <A> of(vararg xs: A): Stream<A> =
@@ -22,10 +23,12 @@ sealed class Stream<out A> {
                 { of(*xs.sliceArray(1 until xs.size)) })
     }
 }
+
 data class Cons<out A>(
     val head: () -> A,
     val tail: () -> Stream<A>
 ) : Stream<A>()
+
 object Empty : Stream<Nothing>()
 
 fun <A> Stream<A>.headOption(): Option<A> =
@@ -34,7 +37,11 @@ fun <A> Stream<A>.headOption(): Option<A> =
         is Cons -> Some(head())
     }
 
-fun <A> Stream<A>.toList(): List<A> = when(this) {
-    is Cons -> LCons(this.head(), this.tail().toList())
-    is Empty -> List.empty()
+fun <A> Stream<A>.toList(): List<A> {
+    tailrec fun loop(acc: List<A>, rem: Stream<A>): List<A> =
+        when (rem) {
+            is Cons -> loop(LCons(rem.head(), acc), rem.tail())
+            is Empty -> acc
+        }
+    return List.reverse(loop(List.empty(), this))
 }
