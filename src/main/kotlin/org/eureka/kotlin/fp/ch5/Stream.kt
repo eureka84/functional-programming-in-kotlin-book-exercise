@@ -45,3 +45,6 @@ fun <A> Stream<A>.toList(): List<A> {
         }
     return List.reverse(loop(List.empty(), this))
 }
+
+fun <A> Stream<A>.take(n: Int): Stream<A> = TODO()
+fun <A> Stream<A>.drop(n: Int): Stream<A> = TODO()
