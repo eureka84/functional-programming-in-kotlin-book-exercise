@@ -4,6 +4,9 @@ import org.eureka.kotlin.fp.ch4.None
 import org.eureka.kotlin.fp.ch4.Option
 import org.eureka.kotlin.fp.ch4.Some
 import org.eureka.kotlin.fp.ch3.List
+import org.eureka.kotlin.fp.ch5.Stream.Companion.cons
+import org.eureka.kotlin.fp.ch5.Stream.Companion.empty
+import java.lang.IllegalStateException
 import org.eureka.kotlin.fp.ch3.Cons as LCons
 
 sealed class Stream<out A> {
@@ -18,9 +21,14 @@ sealed class Stream<out A> {
         fun <A> empty(): Stream<A> = Empty
 
         fun <A> of(vararg xs: A): Stream<A> =
-            if (xs.isEmpty()) empty()
-            else cons({ xs[0] },
-                { of(*xs.sliceArray(1 until xs.size)) })
+            if (xs.isEmpty()) {
+                empty()
+            } else {
+                cons(
+                    { xs[0] },
+                    { of(*xs.sliceArray(1 until xs.size)) }
+                )
+            }
     }
 }
 
@@ -46,5 +54,32 @@ fun <A> Stream<A>.toList(): List<A> {
     return List.reverse(loop(List.empty(), this))
 }
 
-fun <A> Stream<A>.take(n: Int): Stream<A> = TODO()
-fun <A> Stream<A>.drop(n: Int): Stream<A> = TODO()
+fun <A> Stream<A>.take(n: Int): Stream<A> {
+    fun go(xs: Stream<A>, n: Int): Stream<A> = when (xs) {
+        is Empty -> empty()
+        is Cons ->
+            if (n == 0) empty()
+            else cons(xs.head, { go(xs.tail(), n - 1) })
+    }
+    return go(this, n)
+}
+
+fun <A> Stream<A>.drop(n: Int): Stream<A> {
+    tailrec fun go(xs: Stream<A>, n: Int): Stream<A> = when (xs) {
+        is Empty -> empty()
+        is Cons ->
+            if (n == 0) xs
+            else go(xs.tail(), n - 1)
+    }
+    return go(this, n)
+}
+
+fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> =
+    when (this) {
+        is Empty -> empty()
+        is Cons ->
+            if (p(this.head()))
+                cons(this.head, { this.tail().takeWhile(p) })
+            else
+                empty()
+    }

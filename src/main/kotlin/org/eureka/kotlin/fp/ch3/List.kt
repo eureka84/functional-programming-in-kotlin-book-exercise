@@ -3,6 +3,7 @@ package org.eureka.kotlin.fp.ch3
 import java.lang.UnsupportedOperationException
 
 sealed class List<out A> {
+
     companion object {
         fun <A> of(vararg aa: A): List<A> =
             if (aa.isEmpty())
@@ -117,6 +118,17 @@ sealed class List<out A> {
                         hasSubsequence(xs.tail, ys.tail)
                     else
                         hasSubsequence(xs.tail, ys)
+            }
+        }
+
+        fun <A> display(xs: List<A>) {
+            when (xs) {
+                is Nil -> print("Nil")
+                is Cons -> {
+                    print("(${xs.head}, ")
+                    display(xs.tail)
+                    print(")")
+                }
             }
         }
 
