@@ -74,14 +74,7 @@ fun <A> Stream<A>.drop(n: Int): Stream<A> {
 }
 
 fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> =
-    when (this) {
-        is Empty -> empty()
-        is Cons ->
-            if (p(this.head()))
-                cons(this.head, { this.tail().takeWhile(p) })
-            else
-                empty()
-    }
+    this.foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, { b() }) else empty() }
 
 fun <A, B> Stream<A>.foldRight(z: () -> B, f: (A, () -> B) -> B): B =
     when (this) {
