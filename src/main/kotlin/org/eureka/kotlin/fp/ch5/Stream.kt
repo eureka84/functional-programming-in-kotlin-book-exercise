@@ -87,6 +87,9 @@ fun <A, B> Stream<A>.map(f: (A) -> B): Stream<B> =
 fun <A> Stream<A>.filter(p: (A) -> Boolean): Stream<A> =
     this.foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, b) else b() }
 
+fun <A> Stream<A>.find(p: (A) -> Boolean): Option<A> =
+    filter(p).headOption()
+
 fun <A, B> Stream<A>.flatMap(f: (A) -> Stream<B>): Stream<B> =
     this.foldRight({ empty() }) { a, b -> f(a).append(b) }
 
