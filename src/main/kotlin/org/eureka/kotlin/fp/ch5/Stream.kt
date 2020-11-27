@@ -9,8 +9,9 @@ import org.eureka.kotlin.fp.ch5.Stream.Companion.empty
 import org.eureka.kotlin.fp.ch3.Cons as LCons
 
 sealed class Stream<out A> {
+
     companion object {
-        //smart constructors
+
         fun <A> cons(hd: () -> A, tl: () -> Stream<A>): Stream<A> {
             val head: A by lazy(hd)
             val tail: Stream<A> by lazy(tl)
@@ -39,10 +40,7 @@ data class Cons<out A>(
 object Empty : Stream<Nothing>()
 
 fun <A> Stream<A>.headOption(): Option<A> =
-    when (this) {
-        is Empty -> None
-        is Cons -> Some(head())
-    }
+    this.foldRight({ Option.empty() }) { a, _ -> Option.of(a) }
 
 fun <A> Stream<A>.toList(): List<A> {
     tailrec fun loop(acc: List<A>, rem: Stream<A>): List<A> =
