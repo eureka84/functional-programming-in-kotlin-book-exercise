@@ -3,6 +3,7 @@ package org.eureka.kotlin.fp.ch5
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
+import assertk.assertions.isTrue
 import org.junit.Test
 import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch4.Option
@@ -37,7 +38,12 @@ class StreamTest {
     fun `take while`() {
         val p: (Int) -> Boolean = { it % 2 != 0 }
         assertThat(Stream.of(1, 3, 5, 6, 7).takeWhile(p).toList()).isEqualTo(List.of(1, 3, 5))
-        assertThat { Stream.empty<Int>().takeWhile(p) }.isFailure()
+        assertThat(Stream.empty<Int>().takeWhile(p)).isEqualTo(Stream.empty())
     }
 
+    @Test
+    fun `for all`() {
+        assertThat(Stream.of(1, 2, 3, 4).forAll { it < 5 }).isTrue()
+    }
+    
 }

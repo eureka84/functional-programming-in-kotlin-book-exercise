@@ -1,12 +1,11 @@
 package org.eureka.kotlin.fp.ch5
 
+import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch4.None
 import org.eureka.kotlin.fp.ch4.Option
 import org.eureka.kotlin.fp.ch4.Some
-import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch5.Stream.Companion.cons
 import org.eureka.kotlin.fp.ch5.Stream.Companion.empty
-import java.lang.IllegalStateException
 import org.eureka.kotlin.fp.ch3.Cons as LCons
 
 sealed class Stream<out A> {
@@ -83,3 +82,12 @@ fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> =
             else
                 empty()
     }
+
+fun <A, B> Stream<A>.foldRight(z: () -> B, f: (A, () -> B) -> B): B =
+    when (this) {
+        is Cons -> f(this.head()) { tail().foldRight(z, f) }
+        else -> z()
+    }
+
+fun <A> Stream<A>.forAll(p: (A) -> Boolean): Boolean =
+    this.foldRight({ true }) { a, b -> p(a) && b() }
