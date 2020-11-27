@@ -1,9 +1,8 @@
 package org.eureka.kotlin.fp.ch5
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import org.eureka.kotlin.fp.ch3.List
-import org.eureka.kotlin.fp.ch4.None
 import org.eureka.kotlin.fp.ch4.Option
-import org.eureka.kotlin.fp.ch4.Some
 import org.eureka.kotlin.fp.ch5.Stream.Companion.cons
 import org.eureka.kotlin.fp.ch5.Stream.Companion.empty
 import org.eureka.kotlin.fp.ch3.Cons as LCons
@@ -82,3 +81,9 @@ fun <A, B> Stream<A>.foldRight(z: () -> B, f: (A, () -> B) -> B): B =
 
 fun <A> Stream<A>.forAll(p: (A) -> Boolean): Boolean =
     this.foldRight({ true }) { a, b -> p(a) && b() }
+
+fun <A, B> Stream<A>.map(f: (A) -> B): Stream<B> =
+    this.foldRight({ empty() }) { a, b -> cons({ f(a) }, { b() }) }
+
+fun <A> Stream<A>.filter(p: (A) -> Boolean): Stream<A> =
+    this.foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, { b() }) else b() }

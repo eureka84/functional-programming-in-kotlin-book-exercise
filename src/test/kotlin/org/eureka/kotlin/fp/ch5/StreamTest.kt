@@ -45,5 +45,16 @@ class StreamTest {
     fun `for all`() {
         assertThat(Stream.of(1, 2, 3, 4).forAll { it < 5 }).isTrue()
     }
-    
+
+    @Test
+    fun `map of a stream`() {
+        assertThat(Stream.of(1, 2, 3).map { it * 2 }.toList()).isEqualTo(List.of(2, 4, 6))
+    }
+
+    @Test
+    fun `filter elements`() {
+        assertThat(Stream.of(1, 2, 3, 4, 5).filter { it % 2 == 0  }.toList()).isEqualTo(List.of(2, 4))
+        assertThat(Stream.of(1, 3, 5).filter { it % 2 == 0  }.toList()).isEqualTo(List.empty())
+    }
+
 }
