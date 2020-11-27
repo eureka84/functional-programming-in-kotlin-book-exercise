@@ -1,6 +1,5 @@
 package org.eureka.kotlin.fp.ch5
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch4.Option
 import org.eureka.kotlin.fp.ch5.Stream.Companion.cons
@@ -71,7 +70,7 @@ fun <A> Stream<A>.drop(n: Int): Stream<A> {
 }
 
 fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> =
-    this.foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, { b() }) else empty() }
+    this.foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, b) else empty() }
 
 fun <A, B> Stream<A>.foldRight(z: () -> B, f: (A, () -> B) -> B): B =
     when (this) {
@@ -83,7 +82,13 @@ fun <A> Stream<A>.forAll(p: (A) -> Boolean): Boolean =
     this.foldRight({ true }) { a, b -> p(a) && b() }
 
 fun <A, B> Stream<A>.map(f: (A) -> B): Stream<B> =
-    this.foldRight({ empty() }) { a, b -> cons({ f(a) }, { b() }) }
+    this.foldRight({ empty() }) { a, b -> cons({ f(a) }, b) }
 
 fun <A> Stream<A>.filter(p: (A) -> Boolean): Stream<A> =
-    this.foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, { b() }) else b() }
+    this.foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, b) else b() }
+
+fun <A, B> Stream<A>.flatMap(f: (A) -> Stream<B>): Stream<B> =
+    this.foldRight({ empty() }) { a, b -> f(a).append(b) }
+
+fun <A> Stream<A>.append(s: () -> Stream<A>): Stream<A> =
+    this.foldRight(s) { a, b -> cons({ a }, b) }

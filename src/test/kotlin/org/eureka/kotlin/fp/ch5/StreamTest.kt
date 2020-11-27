@@ -57,4 +57,8 @@ class StreamTest {
         assertThat(Stream.of(1, 3, 5).filter { it % 2 == 0  }.toList()).isEqualTo(List.empty())
     }
 
+    @Test
+    fun flatmap() {
+        assertThat(Stream.of(1,2, 3).flatMap { Stream.of(it, it) }.toList()).isEqualTo(List.of(1, 1, 2, 2, 3, 3))
+    }
 }
