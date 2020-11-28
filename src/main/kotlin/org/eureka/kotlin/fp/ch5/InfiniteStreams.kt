@@ -3,7 +3,6 @@ package org.eureka.kotlin.fp.ch5
 import org.eureka.kotlin.fp.ch4.Option
 import org.eureka.kotlin.fp.ch4.getOrElse
 import org.eureka.kotlin.fp.ch4.map
-import org.eureka.kotlin.fp.ch4.orElse
 
 object InfiniteStreams {
 
