@@ -109,4 +109,19 @@ class StreamTest {
         assertThat(Stream.of(1, 2, 3, 4, 5).startsWith(Stream.of(1, 2, 3))).isTrue()
     }
 
+    @Test
+    fun tails() {
+        val tails = Stream.of(1, 2, 3).tails().toList()
+        val expected = List.of(
+            List.of(1, 2, 3),
+            List.of(2, 3),
+            List.of(3),
+            List.empty()
+        )
+
+        val pairs = List.zipWith(tails, expected) { a, b -> Pair(a.toList(), b) }
+
+        assertThat(List.foldRight(pairs, true) {p, acc -> acc && p.first == p.second}).isTrue()
+    }
+
 }

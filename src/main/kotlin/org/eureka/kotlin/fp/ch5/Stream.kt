@@ -89,7 +89,7 @@ fun <A> Stream<A>.drop(n: Int): Stream<A> {
 
 fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> =
     unfold(this) { s ->
-        when(s) {
+        when (s) {
             is Empty -> Option.empty()
             is Cons ->
                 if (p(s.head()))
@@ -176,5 +176,12 @@ fun <A, B> Stream<A>.zipAll(
     }
 
 fun <A> Stream<A>.startsWith(that: Stream<A>): Boolean =
-    this.zipWith(that) { a, b -> Pair(a, b) }.forAll { (a, b) -> a == b }
+    this.zipWith(that) { a, b -> a == b }.forAll { it }
 
+fun <A> Stream<A>.tails(): Stream<Stream<A>> =
+    unfold(this) { s ->
+        when (s) {
+            is Empty -> Option.empty()
+            is Cons -> Option.of(Pair(s, s.tail()))
+        }
+    }
