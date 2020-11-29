@@ -188,10 +188,9 @@ fun <A> Stream<A>.tails(): Stream<Stream<A>> =
     }
 
 fun <A, B> Stream<A>.scanRight(z: B, f: (A, () -> B) -> B): Stream<B> =
-    unfold(Pair(this, z)){(s, b) -> when(s){
-        is Empty -> Option.empty()
-        is Cons -> {
-            val nextB = f(s.head()) { b }
-            Option.of(Pair(nextB, Pair(s.tail(), nextB)))
-        }
-    }}
+    foldRight({ Pair(z, Stream.of(z)) },
+        { a: A, p0: () -> Pair<B, Stream<B>> ->
+            val p1: Pair<B, Stream<B>> by lazy { p0() }
+            val b2: B = f(a) { p1.first }
+            Pair(b2, cons({ b2 }, { p1.second }))
+        }).second
