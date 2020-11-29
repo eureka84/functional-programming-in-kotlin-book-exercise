@@ -1,9 +1,7 @@
 package org.eureka.kotlin.fp.ch5
 
 import org.eureka.kotlin.fp.ch3.List
-import org.eureka.kotlin.fp.ch4.Option
-import org.eureka.kotlin.fp.ch4.getOrElse
-import org.eureka.kotlin.fp.ch4.map
+import org.eureka.kotlin.fp.ch4.*
 import org.eureka.kotlin.fp.ch5.Stream.Companion.cons
 import org.eureka.kotlin.fp.ch5.Stream.Companion.empty
 import org.eureka.kotlin.fp.ch5.Stream.Companion.unfold
@@ -98,7 +96,7 @@ fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> =
                     Option.empty()
         }
     }
-//    this.foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, b) else empty() }
+//    this.foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, b) else b() }
 
 fun <A, B> Stream<A>.foldRight(z: () -> B, f: (A, () -> B) -> B): B =
     when (this) {
@@ -176,7 +174,10 @@ fun <A, B> Stream<A>.zipAll(
     }
 
 fun <A> Stream<A>.startsWith(that: Stream<A>): Boolean =
-    this.zipWith(that) { a, b -> a == b }.forAll { it }
+    this.zipAll(that)
+        .takeWhile { (_ , s: Option<A>) ->  !s.isEmpty() }
+        .forAll { it.first == it.second }
+
 
 fun <A> Stream<A>.tails(): Stream<Stream<A>> =
     unfold(this) { s ->

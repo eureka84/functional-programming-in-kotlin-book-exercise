@@ -48,3 +48,9 @@ fun <A> Option<A>.getOrElse(default: () -> A): A = when (this) {
 fun <A> Option<A>.orElse(ob: () -> Option<A>): Option<A> = this.map { a -> Some(a) }.getOrElse(ob)
 
 fun <A> Option<A>.filter(f: (A) -> Boolean): Option<A> = this.flatMap { a -> if (f(a)) Some(a) else None }
+
+fun <A> Option<A>.isEmpty(): Boolean =
+    when(this) {
+        is Some -> false
+        is None -> true
+    }

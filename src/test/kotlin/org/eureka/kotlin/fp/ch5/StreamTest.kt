@@ -2,6 +2,7 @@ package org.eureka.kotlin.fp.ch5
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import org.junit.Test
 import org.eureka.kotlin.fp.ch3.List
@@ -107,6 +108,8 @@ class StreamTest {
     @Test
     fun startsWith() {
         assertThat(Stream.of(1, 2, 3, 4, 5).startsWith(Stream.of(1, 2, 3))).isTrue()
+        assertThat(Stream.of(1, 2).startsWith(Stream.of(1, 2, 3))).isFalse()
+
     }
 
     @Test
