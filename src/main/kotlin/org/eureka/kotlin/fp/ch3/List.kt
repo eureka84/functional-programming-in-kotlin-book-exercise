@@ -54,7 +54,7 @@ sealed class List<out A> {
         fun <A, B> flatMap(xa: List<A>, f: (A) -> List<B>): List<B> = concatenate(map(xa, f))
 
         fun <A> filter(xs: List<A>, f: (A) -> Boolean): List<A> =
-            flatMap(xs) { if (f(it)) of(it) else empty()}
+            flatMap(xs) { if (f(it)) of(it) else empty() }
 //            foldRight(xs, empty()) { el, acc ->
 //                if (f(el)) Cons(el, acc) else acc
 //            }
@@ -101,7 +101,7 @@ sealed class List<out A> {
                 throw IllegalStateException("Cannot init Nil list")
         }
 
-        fun <A,B,C> zipWith(xs: List<A>, ys: List<B>, f: (A, B) -> C): List<C> = when (xs) {
+        fun <A, B, C> zipWith(xs: List<A>, ys: List<B>, f: (A, B) -> C): List<C> = when (xs) {
             is Nil -> Nil
             is Cons -> when (ys) {
                 is Nil -> Nil
@@ -120,6 +120,8 @@ sealed class List<out A> {
                         hasSubsequence(xs.tail, ys)
             }
         }
+
+        fun <A> forAll(xs: List<A>, p: (A) -> Boolean) = foldRight(xs, true) { a, acc -> acc && p(a) }
     }
 }
 

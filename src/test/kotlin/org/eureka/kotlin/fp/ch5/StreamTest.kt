@@ -53,19 +53,19 @@ class StreamTest {
 
     @Test
     fun `filter elements`() {
-        assertThat(Stream.of(1, 2, 3, 4, 5).filter { it % 2 == 0  }.toList()).isEqualTo(List.of(2, 4))
-        assertThat(Stream.of(1, 3, 5).filter { it % 2 == 0  }.toList()).isEqualTo(List.empty())
+        assertThat(Stream.of(1, 2, 3, 4, 5).filter { it % 2 == 0 }.toList()).isEqualTo(List.of(2, 4))
+        assertThat(Stream.of(1, 3, 5).filter { it % 2 == 0 }.toList()).isEqualTo(List.empty())
     }
 
     @Test
     fun flatmap() {
-        assertThat(Stream.of(1,2, 3).flatMap { Stream.of(it, it) }.toList()).isEqualTo(List.of(1, 1, 2, 2, 3, 3))
+        assertThat(Stream.of(1, 2, 3).flatMap { Stream.of(it, it) }.toList()).isEqualTo(List.of(1, 1, 2, 2, 3, 3))
     }
 
     @Test
     fun `find elem`() {
-        assertThat(Stream.of(1, 2, 3, 4, 5).find { it % 2 == 0  }).isEqualTo(Option.of(2))
-        assertThat(Stream.of(1, 3, 5).find { it % 2 == 0  }).isEqualTo(Option.empty())
+        assertThat(Stream.of(1, 2, 3, 4, 5).find { it % 2 == 0 }).isEqualTo(Option.of(2))
+        assertThat(Stream.of(1, 3, 5).find { it % 2 == 0 }).isEqualTo(Option.empty())
     }
 
     @Test
@@ -124,11 +124,11 @@ class StreamTest {
 
         val pairs = List.zipWith(tails, expected) { a, b -> Pair(a.toList(), b) }
 
-        assertThat(List.foldRight(pairs, true) {p, acc -> acc && p.first == p.second}).isTrue()
+        assertThat(List.forAll(pairs) { (f, s) -> f == s }).isTrue()
     }
 
     @Test
     fun `scanRight test`() {
-        assertThat(Stream.of(1, 3, 5).scanRight(0) { a, b -> a + b()}.toList()).isEqualTo(List.of(1, 4, 9))
+        assertThat(Stream.of(1, 3, 5).scanRight(0) { a, b -> a + b() }.toList()).isEqualTo(List.of(9, 8, 5, 0))
     }
 }
