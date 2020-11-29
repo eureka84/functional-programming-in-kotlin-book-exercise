@@ -127,4 +127,8 @@ class StreamTest {
         assertThat(List.foldRight(pairs, true) {p, acc -> acc && p.first == p.second}).isTrue()
     }
 
+    @Test
+    fun `scanRight test`() {
+        assertThat(Stream.of(1, 3, 5).scanRight(0) { a, b -> a + b()}.toList()).isEqualTo(List.of(1, 4, 9))
+    }
 }

@@ -186,3 +186,12 @@ fun <A> Stream<A>.tails(): Stream<Stream<A>> =
             is Cons -> Option.of(Pair(s, s.tail()))
         }
     }
+
+fun <A, B> Stream<A>.scanRight(z: B, f: (A, () -> B) -> B): Stream<B> =
+    unfold(Pair(this, z)){(s, b) -> when(s){
+        is Empty -> Option.empty()
+        is Cons -> {
+            val nextB = f(s.head()) { b }
+            Option.of(Pair(nextB, Pair(s.tail(), nextB)))
+        }
+    }}
