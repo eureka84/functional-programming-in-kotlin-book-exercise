@@ -8,18 +8,23 @@ object InfiniteStreams {
 
     fun ones(): Stream<Int> = constant(1)
 
-    fun <A> constant(a: A): Stream<A> = Stream.cons({ a }, { constant(a) })
+    fun <A> constant(a: A): Stream<A> =
+        unfold(a) { Option.of(Pair(a, a))}
+//        Stream.cons({ a }, { constant(a) })
 
     fun from(n: Int): Stream<Int> =
         unfold(n) { s -> Option.of(Pair(s, s + 1)) }
 //        Stream.cons({ n }, { from(n + 1) })
 
     fun fibs(): Stream<Int> {
-        fun loop(last: Int, secondToLast: Int): Stream<Int> =
-            Stream.cons({ last + secondToLast }, { loop(last + secondToLast, last) })
+        data class LastTwo(val secondToLast: Int, val last: Int) {
+            fun move(): LastTwo = LastTwo(last, secondToLast + last)
+        }
 
-        return Stream.cons({ 0 }, { Stream.cons({ 1 }, { loop(1, 0) }) })
+        return unfold(LastTwo(0, 1)) { lastTwo ->  Option.of(Pair(lastTwo.secondToLast, lastTwo.move()))}
     }
+
+
 
     fun <A, S> unfold(z: S, f: (S) -> Option<Pair<A, S>>): Stream<A> =
         f(z).map { (a: A, s: S) -> Stream.cons({ a }, { unfold(s, f) }) }.getOrElse { Stream.empty() }
