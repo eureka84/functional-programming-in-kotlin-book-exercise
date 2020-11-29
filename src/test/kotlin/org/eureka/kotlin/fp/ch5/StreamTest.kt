@@ -2,7 +2,6 @@ package org.eureka.kotlin.fp.ch5
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isFailure
 import assertk.assertions.isTrue
 import org.junit.Test
 import org.eureka.kotlin.fp.ch3.List
@@ -66,6 +65,43 @@ class StreamTest {
     fun `find elem`() {
         assertThat(Stream.of(1, 2, 3, 4, 5).find { it % 2 == 0  }).isEqualTo(Option.of(2))
         assertThat(Stream.of(1, 3, 5).find { it % 2 == 0  }).isEqualTo(Option.empty())
+    }
+
+    @Test
+    fun `zipWith should work`() {
+        val s1 = Stream.of(1, 3, 4, 5)
+        val s2 = Stream.of(1, 2, 3)
+        val empty = Stream.empty<Int>()
+
+        assertThat(s1.zipWith(s2, Int::plus).toList()).isEqualTo(List.of(2, 5, 7))
+        assertThat(s1.zipWith(empty, Int::plus).toList()).isEqualTo(List.empty())
+        assertThat(empty.zipWith(s2, Int::plus).toList()).isEqualTo(List.empty())
+    }
+
+    @Test
+    fun `zipAll test`() {
+        val s1 = Stream.of(1)
+        val s2 = Stream.of(1, 2)
+        val empty = Stream.empty<Int>()
+
+        assertThat(s1.zipAll(s2).toList()).isEqualTo(
+            List.of(
+                Option.of(1) to Option.of(1),
+                Option.empty<Int>() to Option.of(2)
+            )
+        )
+
+        assertThat(s1.zipAll(empty).toList()).isEqualTo(
+            List.of(
+                Option.of(1) to Option.empty()
+            )
+        )
+        assertThat(empty.zipAll(s2).toList()).isEqualTo(
+            List.of(
+                Option.empty<Int>() to Option.of(1),
+                Option.empty<Int>() to Option.of(2)
+            )
+        )
     }
 
 }

@@ -1,8 +1,7 @@
 package org.eureka.kotlin.fp.ch5
 
 import org.eureka.kotlin.fp.ch4.Option
-import org.eureka.kotlin.fp.ch4.getOrElse
-import org.eureka.kotlin.fp.ch4.map
+import org.eureka.kotlin.fp.ch5.Stream.Companion.unfold
 
 object InfiniteStreams {
 
@@ -21,12 +20,14 @@ object InfiniteStreams {
             fun move(): LastTwo = LastTwo(last, secondToLast + last)
         }
 
-        return unfold(LastTwo(0, 1)) { lastTwo ->  Option.of(Pair(lastTwo.secondToLast, lastTwo.move()))}
+        return unfold(LastTwo(0, 1)) { lastTwo ->
+            Option.of(
+                Pair(
+                    lastTwo.secondToLast,
+                    lastTwo.move()
+                )
+            )
+        }
     }
-
-
-
-    fun <A, S> unfold(z: S, f: (S) -> Option<Pair<A, S>>): Stream<A> =
-        f(z).map { (a: A, s: S) -> Stream.cons({ a }, { unfold(s, f) }) }.getOrElse { Stream.empty() }
 
 }

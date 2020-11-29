@@ -120,18 +120,6 @@ sealed class List<out A> {
                         hasSubsequence(xs.tail, ys)
             }
         }
-
-        fun <A> display(xs: List<A>) {
-            when (xs) {
-                is Nil -> print("Nil")
-                is Cons -> {
-                    print("(${xs.head}, ")
-                    display(xs.tail)
-                    print(")")
-                }
-            }
-        }
-
     }
 }
 
