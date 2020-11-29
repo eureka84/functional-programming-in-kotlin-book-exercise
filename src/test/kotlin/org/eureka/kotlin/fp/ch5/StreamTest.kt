@@ -104,4 +104,9 @@ class StreamTest {
         )
     }
 
+    @Test
+    fun startsWith() {
+        assertThat(Stream.of(1, 2, 3, 4, 5).startsWith(Stream.of(1, 2, 3))).isTrue()
+    }
+
 }

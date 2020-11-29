@@ -174,3 +174,7 @@ fun <A, B> Stream<A>.zipAll(
             }
         }
     }
+
+fun <A> Stream<A>.startsWith(that: Stream<A>): Boolean =
+    this.zipWith(that) { a, b -> Pair(a, b) }.forAll { (a, b) -> a == b }
+
