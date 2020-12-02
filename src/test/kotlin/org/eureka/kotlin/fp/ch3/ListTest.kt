@@ -1,9 +1,7 @@
 package org.eureka.kotlin.fp.ch3
 
-import assertk.assertThat
-import assertk.assertions.hasMessage
-import assertk.assertions.isEqualTo
-import assertk.assertions.isFailure
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import org.eureka.kotlin.fp.ch3.List.Companion.append
 import org.eureka.kotlin.fp.ch3.List.Companion.concatenate
 import org.eureka.kotlin.fp.ch3.List.Companion.drop
@@ -32,117 +30,123 @@ class ListTest {
     fun `tail of a non empty list`() {
         val list = of(1, 2, 3, 4)
 
-        assertThat(tail(list)).isEqualTo(of(2, 3, 4))
+        tail(list) shouldBe of(2, 3, 4)
     }
 
     @Test
     fun `tail of an empty list`() {
-        assertThat { tail(Nil) }.isFailure().hasMessage("Tail of an empty list")
+        val exception = shouldThrow<UnsupportedOperationException> { tail(Nil) }
+
+        exception.message shouldBe "Tail of an empty list"
     }
 
     @Test
     fun `set head of an empty list`() {
-        assertThat { setHead(empty(), 1) }.isFailure().hasMessage("Cannot replace `head` of a Nil list")
+        val exception = shouldThrow<UnsupportedOperationException> { setHead(empty(), 1) }
+
+        exception.message shouldBe "Cannot replace `head` of a Nil list"
     }
 
     @Test
     fun `set head of a non empty list`() {
-        assertThat(setHead(of(12, 2, 3, 4), 1)).isEqualTo(of(1, 2, 3, 4))
+        setHead(of(12, 2, 3, 4), 1) shouldBe of(1, 2, 3, 4)
     }
 
     @Test
     fun `drop n elements of an empty list`() {
-        assertThat { drop(Nil, 3) }.isFailure().hasMessage("Cannot drop more elements than in list")
+        val exception = shouldThrow<IllegalStateException> { drop(Nil, 3) }
+
+        exception.message shouldBe "Cannot drop more elements than in list"
     }
 
     @Test
     fun `drop n elements from a non empty list`() {
-        assertThat(drop(of(1, 2, 3, 4), 2)).isEqualTo(of(3, 4))
+        drop(of(1, 2, 3, 4), 2) shouldBe of(3, 4)
     }
 
     @Test
     fun `drop while on an empty list`() {
-        assertThat(dropWhile(Nil) { true }).isEqualTo(empty())
+        dropWhile(Nil) { true } shouldBe empty()
     }
 
     @Test
     fun `drop while on non empty list`() {
-        assertThat(dropWhile(of(1, 2, 3, 4)) { n -> n < 3 }).isEqualTo(of(3, 4))
+        dropWhile(of(1, 2, 3, 4)) { n -> n < 3 } shouldBe of(3, 4)
     }
 
     @Test
     fun `init of an empty list`() {
-        assertThat { init(Nil) }.isFailure().hasMessage("Cannot init Nil list")
+        val exception = shouldThrow<IllegalStateException> { init(Nil) }
+
+        exception.message shouldBe "Cannot init Nil list"
     }
 
     @Test
     fun `init of a non empty list`() {
-        assertThat(init(of(1, 2, 3, 4, 5))).isEqualTo(of(1, 2, 3, 4))
+        init(of(1, 2, 3, 4, 5)) shouldBe of(1, 2, 3, 4)
     }
 
     @Test
     fun `fold a list using Cons`() {
-        assertThat(
-            foldRight(
-                of(1, 2, 3),
-                empty<Int>(),
-                { x, y -> Cons(x, y) })
-        ).isEqualTo(of(1, 2, 3))
+        foldRight(
+            of(1, 2, 3),
+            empty<Int>(),
+            { x, y -> Cons(x, y) }
+        ) shouldBe of(1, 2, 3)
 
-        assertThat(
-            foldLeft(
-                of(1, 2, 3),
-                empty<Int>(),
-                { x, y -> Cons(y, x) })
-        ).isEqualTo(of(3, 2, 1))
+        foldLeft(
+            of(1, 2, 3),
+            empty<Int>(),
+            { x, y -> Cons(y, x) }
+        ) shouldBe of (3, 2, 1)
     }
 
     @Test
     fun `length of an empty string`() {
-        assertThat(length(Nil)).isEqualTo(0)
+        length(Nil) shouldBe 0
     }
 
     @Test
     fun `length of a non empty string`() {
-        assertThat(length(of(1, 2, 3, 4))).isEqualTo(4)
+        length(of(1, 2, 3, 4)) shouldBe 4
     }
 
     @Test
     fun `reverse a list`() {
-        assertThat(reverse(Nil)).isEqualTo(empty())
-        assertThat(reverse(of(1, 2, 3))).isEqualTo(of(3, 2, 1))
+        reverse(Nil) shouldBe empty()
+        reverse(of(1, 2, 3)) shouldBe of(3, 2, 1)
     }
 
     @Test
     fun `append to a list`() {
-        assertThat(append(Nil, of(1))).isEqualTo(of(1))
-        assertThat(append(of(1, 2, 3), of(4, 5))).isEqualTo(of(1, 2, 3, 4, 5))
+        append(Nil, of(1)) shouldBe of(1)
+        append(of(1, 2, 3), of(4, 5)) shouldBe of(1, 2, 3, 4, 5)
     }
 
     @Test
     fun `concatenate test`() {
-        assertThat(concatenate(of(of(1, 2), of(3, 4), of(5, 6)))).isEqualTo(of(1, 2, 3, 4, 5, 6))
+        concatenate(of(of(1, 2), of(3, 4), of(5, 6))) shouldBe of(1, 2, 3, 4, 5, 6)
     }
 
     @Test
     fun `map test`() {
-        assertThat(map(of(1, 2, 3)) { x -> x + 1 }).isEqualTo(of(2, 3, 4))
+        map(of(1, 2, 3)) { x -> x + 1 } shouldBe of(2, 3, 4)
     }
 
     @Test
     fun `filter elements out of  a list`() {
-        assertThat(filter(of(1, 2, 3, 4)) { it % 2 == 0 }).isEqualTo(of(2, 4))
+        filter(of(1, 2, 3, 4)) { it % 2 == 0 } shouldBe of(2, 4)
     }
 
     @Test
     fun `flatMap on a list`() {
-        assertThat(flatMap(of(1, 2, 3)) { i -> of(i, i) }).isEqualTo(of(1, 1, 2, 2, 3, 3))
+        flatMap(of(1, 2, 3)) { i -> of(i, i) } shouldBe of(1, 1, 2, 2, 3, 3)
     }
 
     @Test
     fun `zipWith test`() {
-        assertThat(zipWith(of(1, 2, 3), of(4, 5, 6)) { a, b -> a + b }).isEqualTo(of(5, 7, 9))
-        assertThat(zipWith(of(1, 2, 3), of(4, 5, 6, 7)) { a, b -> a + b }).isEqualTo(of(5, 7, 9))
+        zipWith(of(1, 2, 3), of(4, 5, 6)) { a, b -> a + b } shouldBe of(5, 7, 9)
+        zipWith(of(1, 2, 3), of(4, 5, 6, 7)) { a, b -> a + b } shouldBe of(5, 7, 9)
     }
 
     @Test

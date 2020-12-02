@@ -1,7 +1,6 @@
 package org.eureka.kotlin.fp.ch4
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
+import io.kotest.matchers.shouldBe
 import org.eureka.kotlin.fp.ch4.Validated.Companion.map2
 import org.junit.jupiter.api.Test
 
@@ -24,8 +23,6 @@ class ValidatedTest {
 
     @Test
     fun `accumulating errors`() {
-        val result = mkPerson("", -2)
-
-        assertThat(result).isEqualTo(Invalid("Name is empty.", "Age is out of range."))
+        mkPerson("", -2) shouldBe Invalid("Name is empty.", "Age is out of range.")
     }
 }

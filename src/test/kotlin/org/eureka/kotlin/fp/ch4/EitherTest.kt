@@ -1,7 +1,6 @@
 package org.eureka.kotlin.fp.ch4
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import java.io.Serializable
 
@@ -13,8 +12,8 @@ class EitherTest {
         val left: Either<String, Int> = Either.left("OPS")
         val add1: (Int) -> Int = { it + 1 }
 
-        assertThat(right.map(add1)).isEqualTo(Either.right(2))
-        assertThat(left.map(add1)).isEqualTo(left)
+        right.map(add1) shouldBe Either.right(2)
+        left.map(add1) shouldBe left
     }
 
     @Test
@@ -23,15 +22,15 @@ class EitherTest {
         val left = Either.left<String, Int>("OPS")
         val f: (Int) -> Either<Serializable, Int> = { Either.catches { 1 / it } }
 
-        assertThat(right.flatMap(f)).isEqualTo(Either.right(0))
-        assertThat(left.flatMap(f)).isEqualTo(left)
+        right.flatMap(f) shouldBe Either.right(0)
+        left.flatMap(f) shouldBe left
     }
 
     @Test
     fun `map2 test`() {
         val add: (Int, Int) -> Int = { a, b -> a + b }
 
-        assertThat(Either.map2(Either.right<String, Int>(2), Either.right(3), add)).isEqualTo(Either.right(5))
+        Either.map2(Either.right<String, Int>(2), Either.right(3), add) shouldBe Either.right(5)
     }
 
     @Test
@@ -40,8 +39,8 @@ class EitherTest {
         val left = Either.left<String, Int>("OPS")
         val default = Either.right<String, Int>(0)
 
-        assertThat(right.orElse { default }).isEqualTo(right)
-        assertThat(left.orElse { default }).isEqualTo(default)
+        right.orElse { default } shouldBe right
+        left.orElse { default } shouldBe default
     }
 
 }

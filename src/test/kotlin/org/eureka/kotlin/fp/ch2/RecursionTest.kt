@@ -1,7 +1,6 @@
 package org.eureka.kotlin.fp.ch2
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 
@@ -9,11 +8,11 @@ class RecursionTest {
 
     @Test
     fun fibonacci() {
-        assertThat(Recursion.fibonacci(0)).isEqualTo(1)
-        assertThat(Recursion.fibonacci(1)).isEqualTo(1)
-        assertThat(Recursion.fibonacci(2)).isEqualTo(2)
-        assertThat(Recursion.fibonacci(3)).isEqualTo(3)
-        assertThat(Recursion.fibonacci(4)).isEqualTo(5)
-        assertThat(Recursion.fibonacci(5)).isEqualTo(8)
+        Recursion.fibonacci(0) shouldBe 1
+        Recursion.fibonacci(1) shouldBe 1
+        Recursion.fibonacci(2) shouldBe 2
+        Recursion.fibonacci(3) shouldBe 3
+        Recursion.fibonacci(4) shouldBe 5
+        Recursion.fibonacci(5) shouldBe 8
     }
 }
