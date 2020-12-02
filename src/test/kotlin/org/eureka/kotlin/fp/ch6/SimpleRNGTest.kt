@@ -8,7 +8,7 @@ class SimpleRNGTest: StringSpec() {
     init {
         "non negatives" {
             forAll<Long> { seed ->
-                nonNegativeInt(SimpleRNG(seed)).first >=0
+                nonNegativeInt(SimpleRNG(seed)).first  >= 0
             }
         }
     }
