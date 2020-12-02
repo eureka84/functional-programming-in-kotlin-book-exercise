@@ -10,7 +10,7 @@ import org.eureka.kotlin.fp.ch4.Option.Companion.map2
 import org.eureka.kotlin.fp.ch4.Option.Companion.of
 import org.eureka.kotlin.fp.ch4.Option.Companion.sequence
 import org.eureka.kotlin.fp.ch4.Option.Companion.traverse
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class OptionTest {
 

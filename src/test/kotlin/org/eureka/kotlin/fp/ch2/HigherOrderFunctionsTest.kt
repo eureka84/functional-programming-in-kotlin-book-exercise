@@ -1,9 +1,9 @@
 package org.eureka.kotlin.fp.ch2
 
 import org.eureka.kotlin.fp.ch2.HigherOrderFunctions.isSorted
-import org.junit.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class HigherOrderFunctionsTest {
 

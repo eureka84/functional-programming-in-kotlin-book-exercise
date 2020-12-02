@@ -7,7 +7,7 @@ import org.eureka.kotlin.fp.ch5.InfiniteStreams.constant
 import org.eureka.kotlin.fp.ch5.InfiniteStreams.fibs
 import org.eureka.kotlin.fp.ch5.InfiniteStreams.from
 import org.eureka.kotlin.fp.ch5.InfiniteStreams.ones
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class InfiniteStreamsTest {
 

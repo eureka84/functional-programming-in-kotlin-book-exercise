@@ -22,9 +22,9 @@ import org.eureka.kotlin.fp.ch3.List.Companion.reverse
 import org.eureka.kotlin.fp.ch3.List.Companion.setHead
 import org.eureka.kotlin.fp.ch3.List.Companion.tail
 import org.eureka.kotlin.fp.ch3.List.Companion.zipWith
-import org.junit.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class ListTest {
 

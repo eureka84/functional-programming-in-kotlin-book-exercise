@@ -4,8 +4,8 @@ import org.eureka.kotlin.fp.ch2.Functions.compose
 import org.eureka.kotlin.fp.ch2.Functions.curry
 import org.eureka.kotlin.fp.ch2.Functions.partial
 import org.eureka.kotlin.fp.ch2.Functions.uncurry
-import org.junit.Test
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class FunctionTest {
 

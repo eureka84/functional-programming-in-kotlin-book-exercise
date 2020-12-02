@@ -3,7 +3,7 @@ package org.eureka.kotlin.fp.ch4
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.eureka.kotlin.fp.ch4.Exercises.variance
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ExercisesTest {
 

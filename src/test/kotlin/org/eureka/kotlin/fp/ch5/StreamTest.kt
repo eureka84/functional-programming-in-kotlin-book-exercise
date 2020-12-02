@@ -4,9 +4,9 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import org.junit.Test
 import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch4.Option
+import org.junit.jupiter.api.Test
 
 class StreamTest {
 

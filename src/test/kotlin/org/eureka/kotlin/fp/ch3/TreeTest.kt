@@ -10,7 +10,7 @@ import org.eureka.kotlin.fp.ch3.Tree.Companion.maximum
 import org.eureka.kotlin.fp.ch3.Tree.Companion.maximumF
 import org.eureka.kotlin.fp.ch3.Tree.Companion.size
 import org.eureka.kotlin.fp.ch3.Tree.Companion.sizeF
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TreeTest {
 

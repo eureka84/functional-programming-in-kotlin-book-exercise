@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.eureka.kotlin.fp.ch3.SomeListUtils.product
 import org.eureka.kotlin.fp.ch3.SomeListUtils.sum
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class SomeListUtilsTest {
 
