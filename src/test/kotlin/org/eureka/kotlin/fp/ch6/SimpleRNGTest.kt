@@ -11,6 +11,13 @@ class SimpleRNGTest: StringSpec() {
                 nonNegativeInt(SimpleRNG(seed)).first  >= 0
             }
         }
+
+        "doubles" {
+            forAll<Long> {
+                val double = double(SimpleRNG(it)).first
+                double in 0.0..1.0
+            }
+        }
     }
 
 }

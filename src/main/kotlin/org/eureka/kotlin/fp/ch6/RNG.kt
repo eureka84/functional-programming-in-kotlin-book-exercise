@@ -15,7 +15,6 @@ fun nonNegativeInt(rng: RNG): Pair<Int, RNG> =
 fun double(rng: RNG): Pair<Double, RNG> =
     nonNegativeInt(rng).let { (n, nextRNG) ->
         val d = when (n) {
-            0, 1 -> Int.MAX_VALUE.toDouble()
             in 0..1 -> n.toDouble()
             else -> 1.0 / n.toDouble()
         }
