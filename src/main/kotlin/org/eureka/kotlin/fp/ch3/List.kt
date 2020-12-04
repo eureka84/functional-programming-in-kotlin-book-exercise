@@ -14,6 +14,7 @@ sealed class List<out A> {
             }
 
         fun <A> empty(): List<A> = Nil
+        fun <A> cons(a: A, tl: List<A>): List<A> = Cons(a, tl)
 
         fun <A, B> foldRight(xs: List<A>, z: B, f: (A, B) -> B): B =
             when (xs) {
