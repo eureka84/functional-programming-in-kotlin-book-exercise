@@ -14,19 +14,23 @@ interface RNG {
 
 fun <A> unit(a: A): Rand<A> = { rng -> Pair(a, rng) }
 fun <A, B> map(s: Rand<A>, f: (A) -> B): Rand<B> =
-    { rng ->
-        val (a, rng2) = s(rng)
-        Pair(f(a), rng2)
-    }
+    flatMap(s) { a -> { rng -> Pair(f(a), rng) } }
 
 fun <A, B, C> map2(
     ra: Rand<A>,
     rb: Rand<B>,
     f: (A, B) -> C
-): Rand<C> = { rng ->
-    val (a, rng1) = ra(rng)
-    val (b, rng2) = rb(rng1)
-    Pair(f(a, b), rng2)
+): Rand<C> =
+    flatMap(ra) { a ->
+        { rng ->
+            val (b, rng1) = rb(rng)
+            Pair(f(a, b), rng1)
+        }
+    }
+
+fun <A, B> flatMap(f: Rand<A>, g: (A) -> Rand<B>): Rand<B> = { rng ->
+    val (a, rng1) = f(rng)
+    g(a)(rng1)
 }
 
 fun <A> sequence(fs: List<Rand<A>>): Rand<List<A>> = { rng: RNG ->
@@ -52,7 +56,7 @@ val intDouble: Rand<Pair<Int, Double>> =
     map2(nonNegativeInt, double) { a, b -> Pair(a, b) }
 
 val doubleInt: Rand<Pair<Double, Int>> =
-    map2(double, nonNegativeInt) { a, b -> Pair(a, b)}
+    map2(double, nonNegativeInt) { a, b -> Pair(a, b) }
 
 val double3: Rand<Triple<Double, Double, Double>> = { rng ->
     val (d1, rng1) = double(rng)
