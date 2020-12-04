@@ -1,5 +1,6 @@
 package org.eureka.kotlin.fp.ch6
 
+import org.eureka.kotlin.fp.ch3.Cons
 import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch5.InfiniteStreams.from
 import org.eureka.kotlin.fp.ch5.map
@@ -22,9 +23,8 @@ fun <A, B, C> map2(
     f: (A, B) -> C
 ): Rand<C> =
     flatMap(ra) { a ->
-        { rng ->
-            val (b, rng1) = rb(rng)
-            Pair(f(a, b), rng1)
+        map(rb) { b ->
+            f(a, b)
         }
     }
 
@@ -33,13 +33,10 @@ fun <A, B> flatMap(f: Rand<A>, g: (A) -> Rand<B>): Rand<B> = { rng ->
     g(a)(rng1)
 }
 
-fun <A> sequence(fs: List<Rand<A>>): Rand<List<A>> = { rng: RNG ->
-    List.foldLeft(fs, Pair(List.empty(), rng)) { (l, rngP), r ->
-        val (a, rngN) = r(rngP)
-        Pair(List.cons(a, l), rngN)
+fun <A> sequence(fs: List<Rand<A>>): Rand<List<A>> =
+    List.foldLeft(fs, unit(List.empty())) { acc, r ->
+        map2(acc, r) { l, a -> List.cons(a, l) }
     }
-}
-
 
 val nonNegativeInt: Rand<Int> = { rng ->
     val (i1, rng2) = rng.nextInt()
