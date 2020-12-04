@@ -9,41 +9,41 @@ class SimpleRNGTest : StringSpec() {
     init {
         "non negatives" {
             forAll<Long> { seed ->
-                nonNegativeInt(SimpleRNG(seed)).first >= 0
+                nonNegativeInt.run(SimpleRNG(seed)).first >= 0
             }
         }
 
         "doubles in 0..1" {
             forAll<Long> {
-                val double = double(SimpleRNG(it)).first
+                val double = double.run(SimpleRNG(it)).first
                 double in 0.0..1.0
             }
         }
 
         "non negatives even" {
             forAll<Long> {
-                val nonNegativeEven = nonNegativeEven(SimpleRNG(it)).first
+                val nonNegativeEven = nonNegativeEven.run(SimpleRNG(it)).first
                 nonNegativeEven % 2 == 0 && nonNegativeEven >= 0
             }
         }
 
         "int double" {
             forAll<Long> {
-                val (int, double) = intDouble(SimpleRNG(it)).first
+                val (int, double) = intDouble.run(SimpleRNG(it)).first
                 int >= 0 && double in 0.0..1.0
             }
         }
 
         "double int" {
             forAll<Long> {
-                val (double, int) = doubleInt(SimpleRNG(it)).first
+                val (double, int) = doubleInt.run(SimpleRNG(it)).first
                 int >= 0 && double in 0.0..1.0
             }
         }
 
         "double3" {
             forAll<Long> {
-                val (d1, d2, d3) = double3(SimpleRNG(it)).first
+                val (d1, d2, d3) = double3.run(SimpleRNG(it)).first
                 val range = 0.0..1.0
                 d1 in range && d2 in range && d3 in range
             }

@@ -1,44 +1,33 @@
 package org.eureka.kotlin.fp.ch6
 
-import org.eureka.kotlin.fp.ch3.Cons
 import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch5.InfiniteStreams.from
 import org.eureka.kotlin.fp.ch5.map
 import org.eureka.kotlin.fp.ch5.take
 import org.eureka.kotlin.fp.ch5.toList
 
-typealias Rand<A> = (RNG) -> Pair<A, RNG>
+typealias Rand<A> = State<RNG, A>
 
 interface RNG {
     fun nextInt(): Pair<Int, RNG>
 }
 
-fun <A> unit(a: A): Rand<A> = { rng -> Pair(a, rng) }
-fun <A, B> map(s: Rand<A>, f: (A) -> B): Rand<B> =
-    flatMap(s) { a -> { rng -> Pair(f(a), rng) } }
-
+fun <A> unit(a: A): Rand<A> = State.unit(a)
+fun <A, B> map(s: Rand<A>, f: (A) -> B): Rand<B> = s.map(f)
 fun <A, B, C> map2(
     ra: Rand<A>,
     rb: Rand<B>,
     f: (A, B) -> C
-): Rand<C> =
-    flatMap(ra) { a ->
-        map(rb) { b ->
-            f(a, b)
-        }
-    }
+): Rand<C> = State.map2(ra, rb, f)
 
-fun <A, B> flatMap(f: Rand<A>, g: (A) -> Rand<B>): Rand<B> = { rng ->
-    val (a, rng1) = f(rng)
-    g(a)(rng1)
-}
+fun <A, B> flatMap(f: Rand<A>, g: (A) -> Rand<B>): Rand<B> = f.flatMap(g)
 
 fun <A> sequence(fs: List<Rand<A>>): Rand<List<A>> =
     List.foldLeft(fs, unit(List.empty())) { acc, r ->
         map2(acc, r) { l, a -> List.cons(a, l) }
     }
 
-val nonNegativeInt: Rand<Int> = { rng ->
+val nonNegativeInt: Rand<Int> = State { rng ->
     val (i1, rng2) = rng.nextInt()
     Pair(if (i1 < 0) -(i1 + 1) else i1, rng2)
 }
@@ -55,16 +44,16 @@ val intDouble: Rand<Pair<Int, Double>> =
 val doubleInt: Rand<Pair<Double, Int>> =
     map2(double, nonNegativeInt) { a, b -> Pair(a, b) }
 
-val double3: Rand<Triple<Double, Double, Double>> = { rng ->
-    val (d1, rng1) = double(rng)
-    val (d2, rng2) = double(rng1)
-    val (d3, rng3) = double(rng2)
+val double3: Rand<Triple<Double, Double, Double>> = State { rng ->
+    val (d1, rng1) = double.run(rng)
+    val (d2, rng2) = double.run(rng1)
+    val (d3, rng3) = double.run(rng2)
     Pair(Triple(d1, d2, d3), rng3)
 }
 
 fun ints(count: Int, rng: RNG): Pair<List<Int>, RNG> {
     val rands: List<Rand<Int>> = from(1).take(count).map { nonNegativeInt }.toList()
-    return sequence(rands)(rng)
+    return sequence(rands).run(rng)
 }
 
 data class SimpleRNG(val seed: Long) : RNG {
