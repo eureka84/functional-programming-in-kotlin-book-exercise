@@ -10,7 +10,7 @@ typealias Par<A> = (ExecutorService) -> Future<A>
 object Pars {
 
     fun <A> run(es: ExecutorService, a: Par<A>): Future<A> = a(es)
-    fun <A, B> asyncF(f: (A) -> B): (A) -> Par<B> = TODO()
+    fun <A, B> asyncF(f: (A) -> B): (A) -> Par<B> = { a -> lazyUnit { f(a) } }
 
     fun <A> lazyUnit(a: () -> A): Par<A> =
         fork { unit(a()) }
@@ -45,8 +45,10 @@ object Pars {
             val b = pb.get(remainder, TimeUnit.MILLISECONDS)
             return f(a, b)
         }
-        override fun cancel(b: Boolean): Boolean = pa.cancel(true) && pb.cancel(true)
-        override fun isCancelled(): Boolean = pa.isCancelled && pb.isCancelled
+        override fun cancel(mayInterruptIfRunning: Boolean): Boolean =
+            pa.cancel(mayInterruptIfRunning) && pb.cancel(mayInterruptIfRunning)
+        override fun isCancelled(): Boolean =
+            pa.isCancelled && pb.isCancelled
     }
 
     fun <A, B, C> map2(
