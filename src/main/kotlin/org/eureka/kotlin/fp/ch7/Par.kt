@@ -7,9 +7,10 @@ import java.util.concurrent.TimeUnit
 
 typealias Par<A> = (ExecutorService) -> Future<A>
 
-fun <A> run(es: ExecutorService, a: Par<A>): Future<A> = a(es)
-
 object Pars {
+
+    fun <A> run(es: ExecutorService, a: Par<A>): Future<A> = a(es)
+    fun <A, B> asyncF(f: (A) -> B): (A) -> Par<B> = TODO()
 
     fun <A> lazyUnit(a: () -> A): Par<A> =
         fork { unit(a()) }
@@ -25,6 +26,29 @@ object Pars {
         override fun isCancelled(): Boolean = false
     }
 
+    data class TimedMap2Future<A, B, C>(
+        val pa: Future<A>,
+        val pb: Future<B>,
+        val f: (A, B) -> C
+    ) : Future<C> {
+
+        override fun isDone(): Boolean = pa.isDone && pb.isDone
+        override fun get(): C  {
+            return f(pa.get(), pb.get())
+        }
+        override fun get(to: Long, tu: TimeUnit): C {
+            val timeoutMillis = TimeUnit.MILLISECONDS.convert(to, tu)
+            val start = System.currentTimeMillis()
+            val a = pa.get(to, tu)
+            val duration = System.currentTimeMillis() - start
+            val remainder = timeoutMillis - duration
+            val b = pb.get(remainder, TimeUnit.MILLISECONDS)
+            return f(a, b)
+        }
+        override fun cancel(b: Boolean): Boolean = pa.cancel(true) && pb.cancel(true)
+        override fun isCancelled(): Boolean = pa.isCancelled && pb.isCancelled
+    }
+
     fun <A, B, C> map2(
         a: Par<A>,
         b: Par<B>,
@@ -33,7 +57,7 @@ object Pars {
         { es: ExecutorService ->
             val af: Future<A> = a(es)
             val bf: Future<B> = b(es)
-            UnitFuture(f(af.get(), bf.get()))
+            TimedMap2Future(af, bf, f)
         }
 
     fun <A> fork(a: () -> Par<A>): Par<A> =

@@ -2,6 +2,7 @@ package org.eureka.kotlin.fp.ch7
 
 import io.kotest.matchers.shouldBe
 import org.eureka.kotlin.fp.ch7.ParExamples.sum
+import org.eureka.kotlin.fp.ch7.Pars.run
 import org.junit.jupiter.api.Test
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
