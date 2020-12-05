@@ -1,7 +1,10 @@
 package org.eureka.kotlin.fp.ch6
 
-import arrow.core.Tuple2
+import arrow.core.extensions.IdMonad
 import arrow.mtl.State
+import arrow.mtl.StateApi.modify
+import arrow.mtl.extensions.fx
+import arrow.mtl.stateSequential
 
 sealed class Input
 object Coin : Input()
@@ -15,24 +18,38 @@ data class Machine(
 
 fun simulateMachine(
     inputs: List<Input>
-): State<Machine, Unit> =
-    State { machine ->
-        inputs.fold(Tuple2(machine, Unit)) { acc, input ->
-            val (m, _) = acc
-
-            when {
-                input is Coin && m.locked && m.candies > 0 ->
-                    Tuple2(m.copy(locked = false, coins = m.coins + 1), Unit)
-                input is Turn && !m.locked ->
-                    Tuple2(
-                        m.copy(
-                            locked = true,
-                            candies = m.candies - 1,
-                            coins = m.coins
-                        ),
-                        Unit
-                    )
-                else -> acc
-            }
-        }
+): State<Machine, Unit> = State.fx(object : IdMonad {}) {
+    val stateTransitions: List<State<Machine, Unit>> = inputs.map { i ->
+        modify { m -> onInput(i, m) }
     }
+    !stateTransitions.stateSequential()
+}
+
+//fun simulateMachine(
+//    inputs: List<Input>
+//): State<Machine, Unit> {
+//    val stateTransitions: List<State<Machine, Unit>> =
+//        inputs.map { i -> modify { m -> onInput(i, m) } }
+//
+//    val stateSequential: State<Machine, List<Unit>> = stateTransitions.stateSequential()
+//
+//    return stateSequential.map(idFunctor) {}
+//}
+
+private fun onInput(
+    input: Input,
+    m: Machine
+): Machine = when {
+    input is Coin && m.locked && m.candies > 0 ->
+        m.copy(
+            locked = false,
+            coins = m.coins + 1
+        )
+    input is Turn && !m.locked ->
+        m.copy(
+            locked = true,
+            candies = m.candies - 1,
+            coins = m.coins
+        )
+    else -> m
+}
