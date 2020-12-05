@@ -88,8 +88,24 @@ object Pars {
     }
 
     fun <A> sequence(ps: List<Par<A>>): Par<List<A>> =
-        ps.fold(unit(listOf())) { acc, par -> map2(acc, par) { l, a -> l + a } }
+        when {
+            ps.isEmpty() -> unit(Nil)
+            ps.size == 1 -> map(ps.head) { listOf(it) }
+            else -> {
+                val (l, r) = ps.splitAt(ps.size / 2)
+                map2(
+                    fork { sequence(l) },
+                    fork { sequence(r) }
+                ) { la, lb -> la + lb }
+            }
+        }
 
 }
+
+val <T> List<T>.head: T
+    get() = first()
+val <T> List<T>.tail: List<T>
+    get() = this.drop(1)
+val Nil = listOf<Nothing>()
 
 

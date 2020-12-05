@@ -22,5 +22,5 @@ object ParExamples {
 
 }
 
-private fun <E> List<E>.splitAt(idx: Int): Pair<List<E>, List<E>> =
+fun <E> List<E>.splitAt(idx: Int): Pair<List<E>, List<E>> =
     Pair(this.subList(0, idx), this.subList(idx, this.size))
