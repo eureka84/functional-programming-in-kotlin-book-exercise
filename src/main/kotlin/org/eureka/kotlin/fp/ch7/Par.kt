@@ -38,7 +38,10 @@ object Pars {
 
     fun <A> fork(a: () -> Par<A>): Par<A> =
         { es: ExecutorService ->
-            es.submit(Callable { a()(es).get() })
+            es.submit(Callable {
+                val valA: Par<A> = a()
+                valA(es).get()
+            })
         }
 }
 

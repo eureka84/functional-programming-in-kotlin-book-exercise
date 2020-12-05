@@ -12,7 +12,7 @@ object ParExamples {
         if (ints.size <= 1)
             unit(ints.firstOption().getOrElse { 0 })
         else {
-            val (l, r) = ints.chunked(ints.size / 2)
+            val (l, r) = ints.splitAt(ints.size / 2)
             map2(
                 fork { sum(l) },
                 fork { sum(r) }
@@ -21,3 +21,6 @@ object ParExamples {
 
 
 }
+
+private fun <E> List<E>.splitAt(idx: Int): Pair<List<E>, List<E>> =
+    Pair(this.subList(0, idx), this.subList(idx, this.size))
