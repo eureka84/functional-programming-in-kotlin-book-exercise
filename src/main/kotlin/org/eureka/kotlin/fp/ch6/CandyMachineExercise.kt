@@ -2,7 +2,7 @@ package org.eureka.kotlin.fp.ch6
 
 import arrow.core.extensions.IdMonad
 import arrow.mtl.State
-import arrow.mtl.StateApi.modify
+import arrow.mtl.StateApi
 import arrow.mtl.extensions.fx
 import arrow.mtl.stateSequential
 
@@ -19,9 +19,11 @@ data class Machine(
 fun simulateMachine(
     inputs: List<Input>
 ): State<Machine, Unit> = State.fx(object : IdMonad {}) {
-    val stateTransitions: List<State<Machine, Unit>> = inputs.map { i ->
-        modify { m -> onInput(i, m) }
-    }
+    val stateTransitions: List<State<Machine, Unit>> =
+        inputs
+            .map(onInput)
+            .map(StateApi::modify)
+
     !stateTransitions.stateSequential()
 }
 
@@ -36,20 +38,18 @@ fun simulateMachine(
 //    return stateSequential.map(idFunctor) {}
 //}
 
-private fun onInput(
-    input: Input,
-    m: Machine
-): Machine = when {
-    input is Coin && m.locked && m.candies > 0 ->
-        m.copy(
-            locked = false,
-            coins = m.coins + 1
-        )
-    input is Turn && !m.locked ->
-        m.copy(
-            locked = true,
-            candies = m.candies - 1,
-            coins = m.coins
-        )
-    else -> m
-}
+private val onInput: (Input) -> (Machine) -> (Machine) =
+    { i ->
+        { s ->
+            when (i) {
+                is Coin ->
+                    if (!s.locked || s.candies == 0) s
+                    else Machine(false, s.candies, s.coins + 1)
+                is Turn ->
+                    if (s.locked || s.candies == 0) s
+                    else Machine(true, s.candies - 1, s.coins)
+            }
+        }
+    }
+
+
