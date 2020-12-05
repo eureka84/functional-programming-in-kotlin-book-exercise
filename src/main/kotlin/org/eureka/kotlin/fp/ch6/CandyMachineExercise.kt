@@ -21,24 +21,13 @@ fun simulateMachine(
 ): State<Machine, Unit> = State.fx(object : IdMonad {}) {
     val stateTransitions: List<State<Machine, Unit>> =
         inputs
-            .map(onInput)
+            .map(machineTransitionGivenInput)
             .map(StateApi::modify)
 
     !stateTransitions.stateSequential()
 }
 
-//fun simulateMachine(
-//    inputs: List<Input>
-//): State<Machine, Unit> {
-//    val stateTransitions: List<State<Machine, Unit>> =
-//        inputs.map { i -> modify { m -> onInput(i, m) } }
-//
-//    val stateSequential: State<Machine, List<Unit>> = stateTransitions.stateSequential()
-//
-//    return stateSequential.map(idFunctor) {}
-//}
-
-private val onInput: (Input) -> (Machine) -> (Machine) =
+private val machineTransitionGivenInput: (Input) -> (Machine) -> (Machine) =
     { i ->
         { s ->
             when (i) {
