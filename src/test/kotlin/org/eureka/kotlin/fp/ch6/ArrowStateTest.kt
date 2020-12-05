@@ -1,7 +1,10 @@
 package org.eureka.kotlin.fp.ch6
 
+import arrow.core.ForId
 import arrow.core.extensions.IdMonad
 import arrow.mtl.State
+import arrow.mtl.StateApi.set
+import arrow.mtl.StateT
 import arrow.mtl.extensions.fx
 import arrow.mtl.run
 import io.kotest.matchers.shouldBe
@@ -27,6 +30,14 @@ class ArrowStateTest {
 
         listInt.size shouldBe 2
     }
+
+    @Test
+    fun `modify state`() {
+        val state: State<Int, Unit> = ArrowState.modify { i -> i + 1 }
+
+        state.run(1).a shouldBe 2
+    }
+
 }
 
 class Fixed(private val n: Int) : RNG {

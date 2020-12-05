@@ -4,6 +4,9 @@ import arrow.core.Tuple2
 import arrow.core.extensions.IdFunctor
 import arrow.core.extensions.IdMonad
 import arrow.mtl.State
+import arrow.mtl.StateApi.get
+import arrow.mtl.StateApi.set
+import arrow.mtl.extensions.fx
 import arrow.mtl.stateSequential
 
 object ArrowState {
@@ -27,5 +30,11 @@ object ArrowState {
         s: State<RNG, A>,
         f: (A) -> B
     ): State<RNG, B> = s.map(idFunctor, f)
+
+    fun <S> modify(f: (S) -> S): State<S, Unit> =
+        State.fx(idMonad) {
+            val s: S = get<S>().bind()
+            set(f(s)).bind()
+        }
 
 }

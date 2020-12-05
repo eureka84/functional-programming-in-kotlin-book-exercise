@@ -6,19 +6,19 @@ import org.eureka.kotlin.fp.ch5.map
 import org.eureka.kotlin.fp.ch5.take
 import org.eureka.kotlin.fp.ch5.toList
 
-typealias Rand<A> = MyState<RNG, A>
+typealias Rand<A> = State<RNG, A>
 
 interface RNG {
     fun nextInt(): Pair<Int, RNG>
 }
 
-fun <A> unit(a: A): Rand<A> = MyState.unit(a)
+fun <A> unit(a: A): Rand<A> = State.unit(a)
 fun <A, B> map(s: Rand<A>, f: (A) -> B): Rand<B> = s.map(f)
 fun <A, B, C> map2(
     ra: Rand<A>,
     rb: Rand<B>,
     f: (A, B) -> C
-): Rand<C> = MyState.map2(ra, rb, f)
+): Rand<C> = State.map2(ra, rb, f)
 
 fun <A, B> flatMap(f: Rand<A>, g: (A) -> Rand<B>): Rand<B> = f.flatMap(g)
 
@@ -27,7 +27,7 @@ fun <A> sequence(fs: List<Rand<A>>): Rand<List<A>> =
         map2(acc, r) { l, a -> List.cons(a, l) }
     }
 
-val nonNegativeInt: Rand<Int> = MyState { rng ->
+val nonNegativeInt: Rand<Int> = State { rng ->
     val (i1, rng2) = rng.nextInt()
     Pair(if (i1 < 0) -(i1 + 1) else i1, rng2)
 }
@@ -44,7 +44,7 @@ val intDouble: Rand<Pair<Int, Double>> =
 val doubleInt: Rand<Pair<Double, Int>> =
     map2(double, nonNegativeInt) { a, b -> Pair(a, b) }
 
-val double3: Rand<Triple<Double, Double, Double>> = MyState { rng ->
+val double3: Rand<Triple<Double, Double, Double>> = State { rng ->
     val (d1, rng1) = double.run(rng)
     val (d2, rng2) = double.run(rng1)
     val (d3, rng3) = double.run(rng2)
