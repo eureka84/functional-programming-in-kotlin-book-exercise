@@ -33,9 +33,10 @@ object Pars {
     ) : Future<C> {
 
         override fun isDone(): Boolean = pa.isDone && pb.isDone
-        override fun get(): C  {
+        override fun get(): C {
             return f(pa.get(), pb.get())
         }
+
         override fun get(to: Long, tu: TimeUnit): C {
             val timeoutMillis = TimeUnit.MILLISECONDS.convert(to, tu)
             val start = System.currentTimeMillis()
@@ -45,8 +46,10 @@ object Pars {
             val b = pb.get(remainder, TimeUnit.MILLISECONDS)
             return f(a, b)
         }
+
         override fun cancel(mayInterruptIfRunning: Boolean): Boolean =
             pa.cancel(mayInterruptIfRunning) && pb.cancel(mayInterruptIfRunning)
+
         override fun isCancelled(): Boolean =
             pa.isCancelled && pb.isCancelled
     }
@@ -69,6 +72,24 @@ object Pars {
                 valA(es).get()
             })
         }
+
+    fun sortPar(parList: Par<List<Int>>): Par<List<Int>> =
+        map(parList) { it.sorted() }
+
+    fun <A, B> map(pa: Par<A>, f: (A) -> B): Par<B> =
+        map2(pa, unit(Unit), { a, _ -> f(a) })
+
+    fun <A, B> parMap(
+        ps: List<A>,
+        f: (A) -> B
+    ): Par<List<B>> = fork {
+        val fbs: List<Par<B>> = ps.map(asyncF(f))
+        sequence(fbs)
+    }
+
+    fun <A> sequence(ps: List<Par<A>>): Par<List<A>> =
+        ps.fold(unit(listOf())) { acc, par -> map2(acc, par) { l, a -> l + a } }
+
 }
 
 
