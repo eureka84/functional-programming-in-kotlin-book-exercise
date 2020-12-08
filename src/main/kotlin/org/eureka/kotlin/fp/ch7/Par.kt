@@ -1,5 +1,6 @@
 package org.eureka.kotlin.fp.ch7
 
+import arrow.syntax.function.curried
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
@@ -76,7 +77,7 @@ object Pars {
             map2(
                 parA,
                 parB
-            ) { a, b -> { c: C -> f(a, b, c) } }
+            ) { a, b -> f.curried()(a)(b) }
         ) { c, g -> g(c) }
 
     fun <A, B, C, D, E> map4(
@@ -93,9 +94,9 @@ object Pars {
                 map2(
                     parA,
                     parB,
-                    { a: A, b: B -> { c: C, d: D -> f(a, b, c, d) } }
+                    { a, b -> f.curried()(a)(b) }
                 ),
-                { c, g -> { d: D -> g(c, d) } }
+                { c, g -> g(c) }
             ),
             { d: D, h -> h(d) }
         )
@@ -117,11 +118,11 @@ object Pars {
                     map2(
                         parA,
                         parB,
-                        { a: A, b: B -> { c: C, d: D, e: E -> f(a, b, c, d, e) } }
+                        { a: A, b: B ->f.curried()(a)(b)}
                     ),
-                    { c, g -> { d: D, e: E -> g(c, d, e) } }
+                    { c, g -> g(c) }
                 ),
-                { d: D, h -> { e: E -> h(d, e) } }
+                { d: D, h -> h(d) }
             )
         ) { e: E, i -> i(e) }
 
