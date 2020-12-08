@@ -1,6 +1,7 @@
 package org.eureka.kotlin.fp.ch7
 
 import io.kotest.matchers.shouldBe
+import org.eureka.kotlin.fp.ch7.ParExamples.max
 import org.eureka.kotlin.fp.ch7.ParExamples.sum
 import org.eureka.kotlin.fp.ch7.Pars.run
 import org.junit.jupiter.api.Test
@@ -34,5 +35,14 @@ internal class ParExamplesTest {
         val result: Future<Int> = run(Executors.newCachedThreadPool(), computation)
 
         result.get() shouldBe 55
+    }
+
+    @Test
+    internal fun `max list parallel`() {
+        val computation: Par<Int> = max(listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+
+        val result: Future<Int> = run(Executors.newCachedThreadPool(), computation)
+
+        result.get() shouldBe 10
     }
 }

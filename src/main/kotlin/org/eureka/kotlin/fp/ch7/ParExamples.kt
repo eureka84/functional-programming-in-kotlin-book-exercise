@@ -19,6 +19,17 @@ object ParExamples {
             ) { lx: Int, rx: Int -> lx + rx }
         }
 
+    fun max(ints: List<Int>): Par<Int> =
+        if (ints.size <= 1)
+            unit(ints.firstOption().getOrElse { 0 })
+        else {
+            val (l, r) = ints.splitAt(ints.size / 2)
+            map2(
+                fork { max(l) },
+                fork { max(r) }
+            ) { lx: Int, rx: Int -> maxOf(lx, rx) }
+        }
+
 
 }
 

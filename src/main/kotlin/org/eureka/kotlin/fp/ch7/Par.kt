@@ -65,6 +65,67 @@ object Pars {
             TimedMap2Future(af, bf, f)
         }
 
+    fun <A, B, C, D> map3(
+        parA: Par<A>,
+        parB: Par<B>,
+        parC: Par<C>,
+        f: (A, B, C) -> D
+    ): Par<D> =
+        map2(
+            parC,
+            map2(
+                parA,
+                parB
+            ) { a, b -> { c: C -> f(a, b, c) } }
+        ) { c, g -> g(c) }
+
+    fun <A, B, C, D, E> map4(
+        parA: Par<A>,
+        parB: Par<B>,
+        parC: Par<C>,
+        parD: Par<D>,
+        f: (A, B, C, D) -> E
+    ): Par<E> =
+        map2(
+            parD,
+            map2(
+                parC,
+                map2(
+                    parA,
+                    parB,
+                    { a: A, b: B -> { c: C, d: D -> f(a, b, c, d) } }
+                ),
+                { c, g -> { d: D -> g(c, d) } }
+            ),
+            { d: D, h -> h(d) }
+        )
+
+    fun <A, B, C, D, E, F> map5(
+        parA: Par<A>,
+        parB: Par<B>,
+        parC: Par<C>,
+        parD: Par<D>,
+        parE: Par<E>,
+        f: (A, B, C, D, E) -> F
+    ): Par<F> =
+        map2(
+            parE,
+            map2(
+                parD,
+                map2(
+                    parC,
+                    map2(
+                        parA,
+                        parB,
+                        { a: A, b: B -> { c: C, d: D, e: E -> f(a, b, c, d, e) } }
+                    ),
+                    { c, g -> { d: D, e: E -> g(c, d, e) } }
+                ),
+                { d: D, h -> { e: E -> h(d, e) } }
+            )
+        ) { e: E, i -> i(e) }
+
+
     fun <A> fork(a: () -> Par<A>): Par<A> =
         { es: ExecutorService ->
             es.submit(Callable {
@@ -99,6 +160,21 @@ object Pars {
                 ) { la, lb -> la + lb }
             }
         }
+
+    fun <A> parFilter(
+        sa: List<A>,
+        f: (A) -> Boolean
+    ): Par<List<A>> = when {
+        sa.isEmpty() -> unit(Nil)
+        sa.size == 1 -> if (f(sa.head)) unit(sa) else unit(Nil)
+        else -> {
+            val (l, r) = sa.splitAt(sa.size / 2)
+            map2(
+                fork { parFilter(l, f) },
+                fork { parFilter(r, f) }
+            ) { la, lb -> la + lb }
+        }
+    }
 
 }
 
