@@ -1,6 +1,5 @@
 package org.eureka.kotlin.fp.ch7
 
-import arrow.core.extensions.set.monoidal.identity
 import arrow.syntax.function.curried
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
