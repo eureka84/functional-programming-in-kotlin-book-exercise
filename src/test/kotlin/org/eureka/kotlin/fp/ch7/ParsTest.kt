@@ -5,6 +5,7 @@ import org.eureka.kotlin.fp.ch7.Pars.asyncF
 import org.eureka.kotlin.fp.ch7.Pars.choice
 import org.eureka.kotlin.fp.ch7.Pars.choiceMap
 import org.eureka.kotlin.fp.ch7.Pars.choiceN
+import org.eureka.kotlin.fp.ch7.Pars.join
 import org.eureka.kotlin.fp.ch7.Pars.parMap
 import org.eureka.kotlin.fp.ch7.Pars.run
 import org.eureka.kotlin.fp.ch7.Pars.unit
@@ -44,4 +45,12 @@ internal class ParsTest {
         val result = choiceMap(unit(1), mapOf( 1 to unit(1), 2 to unit(2)))
         run(newCachedThreadPool(), result).get() shouldBe 1
     }
+
+    @Test
+    internal fun `join of pars`() {
+        val result = join(unit(unit(1)))
+
+        run(newCachedThreadPool(), result).get() shouldBe 1
+    }
+
 }

@@ -1,5 +1,6 @@
 package org.eureka.kotlin.fp.ch7
 
+import arrow.core.extensions.set.monoidal.identity
 import arrow.syntax.function.curried
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
@@ -192,6 +193,8 @@ object Pars {
     fun <A, B> flatMap(pa: Par<A>, choices: (A) -> Par<B>): Par<B> = { es ->
         run(es, choices(run(es, pa).get()))
     }
+
+    fun <A> join(a: Par<Par<A>>): Par<A> = flatMap(a) { it }
 
 }
 
