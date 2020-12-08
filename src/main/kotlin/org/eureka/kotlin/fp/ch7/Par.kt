@@ -118,7 +118,7 @@ object Pars {
                     map2(
                         parA,
                         parB,
-                        { a: A, b: B ->f.curried()(a)(b)}
+                        { a: A, b: B -> f.curried()(a)(b) }
                     ),
                     { c, g -> g(c) }
                 ),
@@ -176,6 +176,13 @@ object Pars {
             ) { la, lb -> la + lb }
         }
     }
+
+    fun <A> choiceN(n: Par<Int>, choices: List<Par<A>>): Par<A> = { es ->
+        run(es, choices[run(es, n).get()])
+    }
+
+    fun <A> choice(cond: Par<Boolean>, t: Par<A>, f: Par<A>): Par<A> =
+        choiceN(map(cond) {b -> if (b) 0 else 1 }, listOf(t, f))
 
 }
 

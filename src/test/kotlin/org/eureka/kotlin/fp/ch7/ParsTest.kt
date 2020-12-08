@@ -2,7 +2,10 @@ package org.eureka.kotlin.fp.ch7
 
 import io.kotest.matchers.shouldBe
 import org.eureka.kotlin.fp.ch7.Pars.asyncF
+import org.eureka.kotlin.fp.ch7.Pars.choice
 import org.eureka.kotlin.fp.ch7.Pars.parMap
+import org.eureka.kotlin.fp.ch7.Pars.run
+import org.eureka.kotlin.fp.ch7.Pars.unit
 import org.junit.jupiter.api.Test
 import java.util.concurrent.Executors.newCachedThreadPool
 
@@ -20,5 +23,12 @@ internal class ParsTest {
         val listOfSquares = parMap(listOf(1, 2, 3, 4)) { it * it }
 
         listOfSquares(newCachedThreadPool()).get() shouldBe listOf(1, 4, 9, 16)
+    }
+
+    @Test
+    internal fun choice() {
+        val result = choice(unit(true), unit(1), unit(2))
+
+        run(newCachedThreadPool(), result).get() shouldBe 1
     }
 }
