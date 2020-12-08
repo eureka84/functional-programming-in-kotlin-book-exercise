@@ -184,6 +184,11 @@ object Pars {
     fun <A> choice(cond: Par<Boolean>, t: Par<A>, f: Par<A>): Par<A> =
         choiceN(map(cond) {b -> if (b) 0 else 1 }, listOf(t, f))
 
+    fun <K, V> choiceMap(
+        key: Par<K>,
+        choices: Map<K, Par<V>>
+    ): Par<V> = { es -> run(es, choices.getValue(run(es, key).get())) }
+
 }
 
 val <T> List<T>.head: T
