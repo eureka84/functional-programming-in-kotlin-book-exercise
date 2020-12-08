@@ -189,6 +189,10 @@ object Pars {
         choices: Map<K, Par<V>>
     ): Par<V> = { es -> run(es, choices.getValue(run(es, key).get())) }
 
+    fun <A, B> chooser(pa: Par<A>, choices: (A) -> Par<B>): Par<B> = { es ->
+        run(es, choices(run(es, pa).get()))
+    }
+
 }
 
 val <T> List<T>.head: T
