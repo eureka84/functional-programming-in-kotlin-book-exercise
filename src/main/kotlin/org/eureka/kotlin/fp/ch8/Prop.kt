@@ -1,11 +1,22 @@
 package org.eureka.kotlin.fp.ch8
 
-import arrow.core.Either
+import org.eureka.kotlin.fp.ch6.RNG
 
 typealias SuccessCount = Int
+typealias TestCases = Int
 typealias FailedCase = String
 
-interface Prop {
-    fun check(): Either<Pair<FailedCase, SuccessCount>, SuccessCount>
-    fun and(p: Prop): Prop
+sealed class Result {
+    abstract fun isFalsified(): Boolean
 }
+object Passed : Result() {
+    override fun isFalsified(): Boolean = false
+}
+data class Falsified(
+    val failure: FailedCase,
+    val successes: SuccessCount
+) : Result() {
+    override fun isFalsified(): Boolean = true
+}
+
+data class Prop(val check: (TestCases, RNG) -> Result)
