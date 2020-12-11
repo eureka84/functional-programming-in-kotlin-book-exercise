@@ -1,5 +1,6 @@
 package org.eureka.kotlin.fp.ch8
 
+import arrow.mtl.run
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
@@ -15,20 +16,20 @@ class GenTest : StringSpec() {
                 else {
                     val (start, end) = if (a < b) Pair(a, b) else Pair(b, a)
                     val choose: Gen<Int> = Gen.choose(start, end)
-                    choose.sample.run(SimpleRNG(seed)).first in start until end
+                    choose.sample.run(SimpleRNG(seed)).b in start until end
                 }
             }
         }
 
         "unit" {
             forAll<Pair<Long, Long>> { (seed, unit) ->
-                Gen.unit(unit).sample.run(SimpleRNG(seed)).first == unit
+                Gen.unit(unit).sample.run(SimpleRNG(seed)).b == unit
             }
         }
 
         "listOfN" {
             forAll<Long> { seed ->
-                val list = Gen.listOfN(10, Gen.choose(1, 100)).sample.run(SimpleRNG(seed)).first
+                val list = Gen.listOfN(10, Gen.choose(1, 100)).sample.run(SimpleRNG(seed)).b
                 list.size == 10 && list.all { it in 1 until 100 }
             }
         }
