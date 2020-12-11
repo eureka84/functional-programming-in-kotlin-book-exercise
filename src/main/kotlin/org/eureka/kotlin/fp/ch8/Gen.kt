@@ -21,6 +21,9 @@ data class Gen<A>(val sample: State<RNG, A>) {
             }.map { i -> i % 2 == 0 }
         )
 
+        fun <A> union(ga: Gen<A>, gb: Gen<A>): Gen<A> =
+            boolean().flatMap { b -> if (b) ga else gb }
+
         fun <A> listOfN(gn: Gen<Int>, ga: Gen<A>): Gen<List<A>> =
             gn.flatMap { n -> listOfN(n, ga) }
 
