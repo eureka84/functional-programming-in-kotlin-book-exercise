@@ -55,7 +55,7 @@
         <dependency>
             <groupId>io.arrow-kt</groupId>
             <artifactId>arrow-fx</artifactId>
-            <version>0.11.0</version>
+            <version>${arrow.version}</version>
         </dependency>
 
 

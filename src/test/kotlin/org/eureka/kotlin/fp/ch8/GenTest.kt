@@ -28,9 +28,19 @@ class GenTest : StringSpec() {
         }
 
         "listOfN" {
+            val ga = Gen.choose(1, 100)
             forAll<Long> { seed ->
-                val list = Gen.listOfN(10, Gen.choose(1, 100)).sample.run(SimpleRNG(seed)).b
+                val listOfN = Gen.listOfN(10, ga)
+                val list = listOfN.sample.run(SimpleRNG(seed)).b
+
                 list.size == 10 && list.all { it in 1 until 100 }
+            }
+            forAll<Long> { seed ->
+                val gn = Gen.choose(1, 10)
+                val listOfN = Gen.listOfN(gn, ga)
+                val list = listOfN.sample.run(SimpleRNG(seed)).b
+
+                list.size in 1 until 10 && list.all { it in 1 until 100 }
             }
         }
     }
