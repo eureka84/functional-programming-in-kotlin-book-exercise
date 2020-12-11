@@ -19,5 +19,18 @@ class GenTest : StringSpec() {
                 }
             }
         }
+
+        "unit" {
+            forAll<Pair<Long, Long>> { (seed, unit) ->
+                Gen.unit(unit).sample.run(SimpleRNG(seed)).first == unit
+            }
+        }
+
+        "listOfN" {
+            forAll<Long> { seed ->
+                val list = Gen.listOfN(10, Gen.choose(1, 100)).sample.run(SimpleRNG(seed)).first
+                list.size == 10 && list.all { it in 1 until 100 }
+            }
+        }
     }
 }
