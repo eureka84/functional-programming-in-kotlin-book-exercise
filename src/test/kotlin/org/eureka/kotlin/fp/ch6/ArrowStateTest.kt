@@ -1,10 +1,7 @@
 package org.eureka.kotlin.fp.ch6
 
-import arrow.core.ForId
-import arrow.core.extensions.IdMonad
 import arrow.mtl.State
-import arrow.mtl.StateApi.set
-import arrow.mtl.StateT
+import arrow.mtl.StateApi
 import arrow.mtl.extensions.fx
 import arrow.mtl.run
 import io.kotest.matchers.shouldBe
@@ -12,12 +9,10 @@ import org.junit.jupiter.api.Test
 
 class ArrowStateTest {
 
-    private val idMonad: IdMonad = object : IdMonad {}
-
     @Test
     fun `state monad comprehension`() {
         val ns2: State<RNG, List<Int>> =
-            State.fx(idMonad) {
+            StateApi.fx() {
                 val x = !ArrowState.int
                 val y = !ArrowState.int
                 val xs: List<Int> = !ArrowState.ints(x)

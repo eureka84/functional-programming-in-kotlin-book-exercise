@@ -1,6 +1,5 @@
 package org.eureka.kotlin.fp.ch6
 
-import arrow.core.extensions.IdMonad
 import arrow.mtl.State
 import arrow.mtl.StateApi
 import arrow.mtl.extensions.fx
@@ -18,7 +17,7 @@ data class Machine(
 
 fun simulateMachine(
     inputs: List<Input>
-): State<Machine, Unit> = State.fx(object : IdMonad {}) {
+): State<Machine, Unit> = StateApi.fx() {
     val stateTransitions: List<State<Machine, Unit>> =
         inputs
             .map(machineTransitionGivenInput)

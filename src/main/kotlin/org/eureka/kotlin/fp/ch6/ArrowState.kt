@@ -1,18 +1,12 @@
 package org.eureka.kotlin.fp.ch6
 
 import arrow.core.Tuple2
-import arrow.core.extensions.IdFunctor
-import arrow.core.extensions.IdMonad
-import arrow.mtl.State
+import arrow.mtl.*
 import arrow.mtl.StateApi.get
 import arrow.mtl.StateApi.set
 import arrow.mtl.extensions.fx
-import arrow.mtl.stateSequential
 
 object ArrowState {
-
-    private val idMonad: IdMonad = object : IdMonad {}
-    private val idFunctor: IdFunctor = object : IdFunctor {}
 
     val int: State<RNG, Int> = State { rng ->
         val (i1, rng1) = rng.nextInt()
@@ -24,15 +18,15 @@ object ArrowState {
     fun <A, B> flatMap(
         s: State<RNG, A>,
         f: (A) -> State<RNG, B>
-    ): State<RNG, B> = s.flatMap(idMonad, f)
+    ): State<RNG, B> = s.flatMap(f)
 
     fun <A, B> map(
         s: State<RNG, A>,
         f: (A) -> B
-    ): State<RNG, B> = s.map(idFunctor, f)
+    ): State<RNG, B> = s.map(f)
 
     fun <S> modify(f: (S) -> S): State<S, Unit> =
-        State.fx(idMonad) {
+        StateApi.fx() {
             val s: S = get<S>().bind()
             set(f(s)).bind()
         }
