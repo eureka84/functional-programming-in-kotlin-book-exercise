@@ -14,6 +14,37 @@ class CheckersTest {
             l.sum() == l.size * (l.getOrNull(0) ?: 0)
         }
 
-        prop.check(100, SimpleRNG(2L)) shouldBe Passed
+        prop.run(100, SimpleRNG(2L)) shouldBe Passed
+    }
+
+    @Test
+    internal fun `and props`() {
+        val gn = Gen.choose(1, 100)
+        val listGen = gn.flatMap { a -> Gen.listOfN(gn, Gen.unit(a)) }
+        val prop =
+            Checkers.forAll(listGen) { l ->
+                l.sum() == l.size * (l.getOrNull(0) ?: 0)
+            }.and(
+                Checkers.forAll(listGen) { l ->
+                    l.all { it == l[0] }
+                }
+            )
+
+        prop.run(100, SimpleRNG(2L)) shouldBe Passed
+    }
+
+    @Test
+    internal fun `or props`() {
+        val gn = Gen.choose(1, 100)
+        val listGen = gn.flatMap { a -> Gen.listOfN(gn, Gen.unit(a)) }
+        val prop = Checkers.forAll(listGen) { l ->
+            l.sum() == l.size * (l.getOrNull(0) ?: 0) + 1
+        }.or(
+            Checkers.forAll(listGen) { l ->
+                l.all { it == l[0] }
+            }
+        )
+
+        prop.run(100, SimpleRNG(2L)) shouldBe Passed
     }
 }
