@@ -32,13 +32,20 @@ data class Prop(val run: (TestCases, RNG) -> Result) {
         }
     }
 
-    fun or(p: Prop): Prop = Prop { tc, rng ->
-        val res1 = self.run(tc, rng)
-        val res2 = p.run(tc, rng)
-        when {
-            res1 is Passed || res2 is Passed -> Passed
-            res1 is Falsified -> res1
-            else -> res2
+    fun or(other: Prop) = Prop { n, rng ->
+        when (val prop = run(n, rng)) {
+            is Falsified ->
+                other.tag(prop.failure).run(n, rng)
+            is Passed -> prop
+        }
+    }
+    private fun tag(msg: String) = Prop { n, rng ->
+        when (val prop = run(n, rng)) {
+            is Falsified -> Falsified(
+                "$msg: ${prop.failure}",
+                prop.successes
+            )
+            is Passed -> prop
         }
     }
 
