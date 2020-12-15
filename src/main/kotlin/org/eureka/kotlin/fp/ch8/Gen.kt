@@ -10,7 +10,13 @@ import org.eureka.kotlin.fp.ch6.nonNegativeInt
 
 data class Gen<A>(val sample: State<RNG, A>) {
 
+    fun unsized(): SGen<A> = SGen { this }
+
+    fun <B> map(f: (A) -> B) = flatMap { a -> unit(f(a)) }
+
     fun <B> flatMap(f: (A) -> Gen<B>): Gen<B> = Gen(sample.flatMap { a -> f(a).sample })
+
+    fun listOf(): SGen<List<A>> = SGen { n -> listOfN(n, this) }
 
     companion object {
 
