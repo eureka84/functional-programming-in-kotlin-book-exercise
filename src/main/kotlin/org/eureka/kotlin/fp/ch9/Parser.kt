@@ -7,29 +7,13 @@ import org.eureka.kotlin.fp.ch8.Prop
 import org.eureka.kotlin.fp.ch9.Parsers.Parser
 
 interface Parsers<PE> {
+
     interface Parser<A>
 
     fun string(s: String): Parser<String>
 
-    fun <A> succeed(a: A): Parser<A> = string("").map { a }
-
-    infix fun <A> Parser<A>.or(pb: () -> Parser<A>): Parser<A>
-
-    fun <A> listOfN(n: Int, p: Parser<A>): Parser<List<A>> =
-        if (n > 0) {
-            map2(p, { listOfN(n - 1, p) }) { a, la ->
-                listOf(a) + la
-            }
-        } else {
-            succeed(emptyList())
-        }
-
-    fun <A> Parser<A>.many(): Parser<List<A>> =
-        map2(this, { this.many() }) { a, l -> listOf(a) + l } or { succeed(emptyList()) }
-
     fun <A, B> Parser<A>.map(f: (A) -> B): Parser<B>
-
-    fun <A> slice(pa: Parser<A>): Parser<String>
+    fun <A, B> Parser<A>.flatMap(f: (A) -> Parser<B>): Parser<B>
 
     infix fun <A, B> Parser<A>.product(pb: () -> Parser<B>): Parser<Pair<A, B>>
 
@@ -38,6 +22,24 @@ interface Parsers<PE> {
         pb: () -> Parser<B>,
         f: (A, B) -> C
     ): Parser<C> = pa.product(pb).map { (a, b) -> f(a, b) }
+
+    fun <A> succeed(a: A): Parser<A> = string("").map { a }
+
+    fun char(c: Char): Parser<Char> = string(c.toString()).map { it[0] }
+
+    infix fun <A> Parser<A>.or(pb: () -> Parser<A>): Parser<A>
+
+    fun <A> listOfN(n: Int, p: Parser<A>): Parser<List<A>> =
+        if (n > 0) {
+            map2(p, { listOfN(n - 1, p) }) { a, la -> listOf(a) + la }
+        } else {
+            succeed(emptyList())
+        }
+
+    fun <A> Parser<A>.many(): Parser<List<A>> =
+        map2(this, { this.many() }) { a, l -> listOf(a) + l } or { succeed(emptyList()) }
+
+    fun <A> Parser<A>.slice(): Parser<String>
 
     fun <A> many1(p: Parser<A>): Parser<List<A>> = map2(p, { p.many() }) { a, la -> listOf(a) + la }
 
@@ -51,6 +53,17 @@ interface Parsers<PE> {
         Triple(p.first, p.second.first, p.second.second)
 
     fun <A> run(p: Parser<A>, input: String): Either<PE, A>
+}
+
+abstract class Examples : Parsers<ParseError> {
+
+    private fun regex(s: String): Parser<String> = TODO()
+
+    val parser: Parser<Int> = regex("[0-9]+").flatMap { digit: String ->
+        val n = digit.toInt()
+        listOfN(n, char('a')).map { n }
+    }
+
 }
 
 object ParseError
