@@ -13,7 +13,7 @@ interface Parsers<PE> {
 
     fun <A> succeed(a: A): Parser<A> = string("").map { a }
 
-    infix fun <A> Parser<A>.or(pb: Parser<A>): Parser<A>
+    infix fun <A> Parser<A>.or(pb: () -> Parser<A>): Parser<A>
 
     fun <A> listOfN(n: Int, p: Parser<A>): Parser<List<A>> =
         if (n > 0) {
@@ -25,24 +25,24 @@ interface Parsers<PE> {
         }
 
     fun <A> Parser<A>.many(): Parser<List<A>> =
-        map2(this, { this.many() }) { a, l -> listOf(a) + l } or succeed(emptyList())
+        map2(this, { this.many() }) { a, l -> listOf(a) + l } or { succeed(emptyList()) }
 
     fun <A, B> Parser<A>.map(f: (A) -> B): Parser<B>
 
     fun <A> slice(pa: Parser<A>): Parser<String>
 
-    infix fun <A, B> Parser<A>.product(pb: Parser<B>): Parser<Pair<A, B>>
+    infix fun <A, B> Parser<A>.product(pb: () -> Parser<B>): Parser<Pair<A, B>>
 
     fun <A, B, C> map2(
         pa: Parser<A>,
         pb: () -> Parser<B>,
         f: (A, B) -> C
-    ): Parser<C> = pa.product(pb()).map { (a, b) -> f(a, b) }
+    ): Parser<C> = pa.product(pb).map { (a, b) -> f(a, b) }
 
     fun <A> many1(p: Parser<A>): Parser<List<A>> = map2(p, { p.many() }) { a, la -> listOf(a) + la }
 
     infix fun String.or(other: String): Parser<String> =
-        string(this).or(string(other))
+        string(this) or { string(other) }
 
     fun <A, B, C> unbiasL(p: Pair<Pair<A, B>, C>): Triple<A, B, C> =
         Triple(p.first.first, p.first.second, p.second)
@@ -65,15 +65,15 @@ abstract class Laws : Parsers<ParseError> {
     // associativity
     fun <A, B, C> productAssociativity(a: Parser<A>, b: Parser<B>, c: Parser<C>, i: Gen<String>) =
         equal(
-            ((a product b) product c).map(::unbiasL),
-            (a product (b product c)).map(::unbiasR),
+            ((a product { b }) product { c }).map(::unbiasL),
+            (a product { b product { c } }).map(::unbiasR),
             i
         )
 
     fun <A, B, C, D> mapAndProduct(a: Parser<A>, b: Parser<B>, f: (A) -> C, g: (B) -> D, i: Gen<String>) =
         equal(
-            a.map(f) product b.map(g),
-            (a product b).map { (a1, b1) -> Pair(f(a1), g(b1)) },
+            a.map(f) product { b.map(g) },
+            (a product { b }).map { (a1, b1) -> Pair(f(a1), g(b1)) },
             i
         )
 }
