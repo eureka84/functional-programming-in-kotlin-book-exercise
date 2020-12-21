@@ -11,11 +11,21 @@ interface Parsers<PE> {
 
     fun string(s: String): Parser<String>
 
-    fun <A> or(pa: Parser<A>, pb: Parser<A>): Parser<A>
+    fun <A> succeed(a: A): Parser<A> = string("").map { a }
 
-    fun <A> listOfN(n: Int, p: Parser<A>): Parser<List<A>>
+    infix fun <A> Parser<A>.or(pb: Parser<A>): Parser<A>
 
-    fun <A> Parser<A>.many(): Parser<List<A>>
+    fun <A> listOfN(n: Int, p: Parser<A>): Parser<List<A>> =
+        if (n > 0) {
+            map2(p, { listOfN(n - 1, p) }) { a, la ->
+                listOf(a) + la
+            }
+        } else {
+            succeed(emptyList())
+        }
+
+    fun <A> Parser<A>.many(): Parser<List<A>> =
+        map2(this, { this.many() }) { a, l -> listOf(a) + l } or succeed(emptyList())
 
     fun <A, B> Parser<A>.map(f: (A) -> B): Parser<B>
 
@@ -32,10 +42,11 @@ interface Parsers<PE> {
     fun <A> many1(p: Parser<A>): Parser<List<A>> = map2(p, { p.many() }) { a, la -> listOf(a) + la }
 
     infix fun String.or(other: String): Parser<String> =
-        or(string(this), string(other))
+        string(this).or(string(other))
 
     fun <A, B, C> unbiasL(p: Pair<Pair<A, B>, C>): Triple<A, B, C> =
         Triple(p.first.first, p.first.second, p.second)
+
     fun <A, B, C> unbiasR(p: Pair<A, Pair<B, C>>): Triple<A, B, C> =
         Triple(p.first, p.second.first, p.second.second)
 
