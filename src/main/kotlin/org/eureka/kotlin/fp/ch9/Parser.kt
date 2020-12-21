@@ -10,10 +10,12 @@ interface Parsers<PE> {
 
     interface Parser<A>
 
+    fun <A> succeed(a: A): Parser<A> = string("").map { a }
+    fun <A, B> Parser<A>.flatMap(f: (A) -> Parser<B>): Parser<B>
+
     fun string(s: String): Parser<String>
 
-    fun <A, B> Parser<A>.map(f: (A) -> B): Parser<B>
-    fun <A, B> Parser<A>.flatMap(f: (A) -> Parser<B>): Parser<B>
+    fun <A, B> Parser<A>.map(f: (A) -> B): Parser<B> = this.flatMap { a -> succeed(f(a)) }
 
     infix fun <A, B> Parser<A>.product(pb: () -> Parser<B>): Parser<Pair<A, B>> =
         this.flatMap { a -> pb().map { b -> Pair(a,b) } }
@@ -23,8 +25,6 @@ interface Parsers<PE> {
         pb: () -> Parser<B>,
         f: (A, B) -> C
     ): Parser<C> =  pa.flatMap { a -> pb().map { b -> f(a,b) } }
-
-    fun <A> succeed(a: A): Parser<A> = string("").map { a }
 
     fun char(c: Char): Parser<Char> = string(c.toString()).map { it[0] }
 
