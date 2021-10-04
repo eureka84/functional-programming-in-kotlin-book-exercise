@@ -1,14 +1,13 @@
 package org.eureka.kotlin.fp.ch9
 
 import arrow.core.Either
-import org.eureka.kotlin.fp.ch8.Checkers.forAll
-import org.eureka.kotlin.fp.ch8.Gen
-import org.eureka.kotlin.fp.ch8.Prop
-import org.eureka.kotlin.fp.ch9.Parsers.Parser
+
+typealias Parser<A> = (Location) -> Result<A>
+sealed class Result<out A>
+data class Success<out A>(val a: A, val consumed: Int) : Result<A>()
+data class Failure(val parserError: ParseError, val committed: Boolean = true) : Result<Nothing>()
 
 interface Parsers<PE> {
-
-    interface Parser<A>
 
     fun <A> succeed(a: A): Parser<A> = string("").map { a }
     fun <A, B> Parser<A>.flatMap(f: (A) -> Parser<B>): Parser<B>
@@ -47,47 +46,34 @@ interface Parsers<PE> {
     infix fun String.or(other: String): Parser<String> =
         string(this) or { string(other) }
 
-    fun <A, B, C> unbiasL(p: Pair<Pair<A, B>, C>): Triple<A, B, C> =
-        Triple(p.first.first, p.first.second, p.second)
+    fun <A> defer(pa: Parser<A>): () -> Parser<A>
 
-    fun <A, B, C> unbiasR(p: Pair<A, Pair<B, C>>): Triple<A, B, C> =
-        Triple(p.first, p.second.first, p.second.second)
+    infix fun <A> Parser<A>.skipR(ps: Parser<String>): Parser<A>
+    infix fun <B> Parser<String>.skipL(pb: Parser<B>): Parser<B>
+    infix fun <A> Parser<A>.sep(p2: Parser<String>): Parser<List<A>>
+    fun <A> surround(start: Parser<String>, stop: Parser<String>, p: Parser<A>): Parser<A>
 
     fun <A> run(p: Parser<A>, input: String): Either<PE, A>
+
+    fun regex(s: String): Parser<String>
+
+    fun <A> tag(msg: String, p: Parser<A>): Parser<A>
+    fun <A> scope(msg: String, p: Parser<A>): Parser<A>
+    fun <A> attempt(p: Parser<A>): Parser<A>
+
 }
 
-abstract class Examples : Parsers<ParseError> {
+data class ParseError(val stack: List<Pair<Location, String>>)
 
-    private fun regex(s: String): Parser<String> = TODO()
-
-    val parser: Parser<Int> = regex("[0-9]+").flatMap { digit: String ->
-        val n = digit.toInt()
-        listOfN(n, char('a')).map { n }
+data class Location(val input: String, val offset: Int = 0) {
+    private val slice by lazy { input.slice(0..offset + 1) }
+    val line by lazy { slice.count { it == '\n' } + 1 }
+    val column by lazy {
+        when (val n = slice.lastIndexOf('\n')) {
+            -1 -> offset + 1
+            else -> offset - n
+        }
     }
-
 }
-
-object ParseError
-
-abstract class Laws : Parsers<ParseError> {
-    private fun <A> equal(p1: Parser<A>, p2: Parser<A>, i: Gen<String>): Prop =
-        forAll(i) { s -> run(p1, s) == run(p2, s) }
-
-    fun <A> mapLaw(p: Parser<A>, i: Gen<String>): Prop =
-        equal(p, p.map { a -> a }, i)
-
-    // associativity
-    fun <A, B, C> productAssociativity(a: Parser<A>, b: Parser<B>, c: Parser<C>, i: Gen<String>) =
-        equal(
-            ((a product { b }) product { c }).map(::unbiasL),
-            (a product { b product { c } }).map(::unbiasR),
-            i
-        )
-
-    fun <A, B, C, D> mapAndProduct(a: Parser<A>, b: Parser<B>, f: (A) -> C, g: (B) -> D, i: Gen<String>) =
-        equal(
-            a.map(f) product { b.map(g) },
-            (a product { b }).map { (a1, b1) -> Pair(f(a1), g(b1)) },
-            i
-        )
-}
+fun errorLocation(e: ParseError): Location = TODO()
+fun errorMessage(e: ParseError): String = TODO()
