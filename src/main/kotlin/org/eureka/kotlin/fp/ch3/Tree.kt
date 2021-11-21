@@ -1,6 +1,13 @@
 package org.eureka.kotlin.fp.ch3
 
-sealed class Tree<out A> {
+import arrow.Kind
+
+class ForTree
+typealias TreeOf<A> = Kind<ForTree, A>
+
+fun <A> TreeOf<A>.fix(): Tree<A> = this as Tree<A>
+
+sealed class Tree<out A>: TreeOf<A> {
 
     companion object {
 
