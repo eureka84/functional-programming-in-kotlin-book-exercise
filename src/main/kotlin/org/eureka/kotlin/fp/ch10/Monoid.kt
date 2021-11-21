@@ -100,4 +100,16 @@ object MonoidExtensions {
             }
         }
 
+    fun <A, B> productMonoid(
+        ma: Monoid<A>,
+        mb: Monoid<B>
+    ): Monoid<Pair<A, B>> = object : Monoid<Pair<A, B>> {
+        override fun combine(p1: Pair<A, B>, p2: Pair<A, B>): Pair<A, B> {
+            val (a1, b1) = p1
+            val (a2, b2) = p2
+            return Pair(ma.combine(a1, a2), mb.combine(b1, b2))
+        }
+
+        override val nil: Pair<A, B> = Pair(ma.nil, mb.nil)
+    }
 }
