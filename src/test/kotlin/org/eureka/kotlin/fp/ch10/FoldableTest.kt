@@ -4,8 +4,10 @@ import arrow.Kind
 import arrow.core.Option
 import arrow.core.k
 import io.kotest.matchers.shouldBe
+import org.eureka.kotlin.fp.ch10.FoldableExamples.bag
 import org.eureka.kotlin.fp.ch3.Tree.Companion.branch
 import org.eureka.kotlin.fp.ch3.Tree.Companion.leaf
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -23,6 +25,11 @@ class FoldableTest {
     @MethodSource("toList")
     internal fun <F> toList(fa: Kind<F, Int>, foldable: Foldable<F>, expected: List<Int>) {
         foldable.toList(fa) shouldBe expected
+    }
+
+    @Test
+    internal fun `bag computation`() {
+        bag(listOf("a", "a", "b", "c", "c", "c")) shouldBe mapOf("a" to 2, "b" to 1, "c" to 3)
     }
 
     companion object {
@@ -45,4 +52,5 @@ class FoldableTest {
             )
         }
     }
+
 }

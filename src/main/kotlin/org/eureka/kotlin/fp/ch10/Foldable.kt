@@ -1,12 +1,12 @@
 package org.eureka.kotlin.fp.ch10
 
 import arrow.Kind
-import arrow.core.ForListK
-import arrow.core.ForOption
-import arrow.core.ListKOf
-import arrow.core.fix
+import arrow.core.*
+import org.eureka.kotlin.fp.ch10.ListFoldable.foldMap
 import org.eureka.kotlin.fp.ch10.MonoidInstances.dual
 import org.eureka.kotlin.fp.ch10.MonoidInstances.endoMonoid
+import org.eureka.kotlin.fp.ch10.MonoidInstances.intAddition
+import org.eureka.kotlin.fp.ch10.MonoidInstances.mapMergeMonoid
 import org.eureka.kotlin.fp.ch3.ForTree
 import org.eureka.kotlin.fp.ch3.Tree
 import org.eureka.kotlin.fp.ch3.fix
@@ -50,5 +50,10 @@ object OptionFoldable : Foldable<ForOption> {
     override fun <A, B> foldMap(fa: Kind<ForOption, A>, m: Monoid<B>, f: (A) -> B): B {
         return fa.fix().fold({ m.nil }, f)
     }
+}
+
+object FoldableExamples {
+    fun <A> bag(la: List<A>): Map<A, Int> =
+        foldMap(la.k(), mapMergeMonoid(intAddition())) { a -> mapOf(a to 1) }
 }
 

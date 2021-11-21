@@ -1,6 +1,7 @@
 package org.eureka.kotlin.fp.ch10
 
 import arrow.core.Option
+import arrow.core.extensions.set.foldable.foldLeft
 import org.eureka.kotlin.fp.ch10.MonoidInstances.dual
 import org.eureka.kotlin.fp.ch10.MonoidInstances.endoMonoid
 import org.eureka.kotlin.fp.ch7.Par
@@ -52,6 +53,33 @@ object MonoidInstances {
         override fun combine(a1: (A) -> A, a2: (A) -> A): (A) -> A = { a -> a2(a1(a)) }
         override val nil: (A) -> A = { it }
     }
+
+    fun <K, V> mapMergeMonoid(v: Monoid<V>): Monoid<Map<K, V>> =
+        object : Monoid<Map<K, V>> {
+            override fun combine(a1: Map<K, V>, a2: Map<K, V>): Map<K, V> =
+                (a1.keys + a2.keys).foldLeft(nil) { acc, k ->
+                    acc + mapOf(
+                        k to v.combine(
+                            a1.getOrDefault(k, v.nil),
+                            a2.getOrDefault(k, v.nil)
+                        )
+                    )
+                }
+
+            override val nil: Map<K, V> = emptyMap()
+        }
+
+    fun <A, B> functionMonoid(b: Monoid<B>): Monoid<(A) -> B> = object : Monoid<(A) -> B> {
+        override fun combine(f1: (A) -> B, f2: (A) -> B): (A) -> B {
+            return { a ->
+                b.combine(f1(a), f2(a))
+            }
+        }
+
+        override val nil: (A) -> B
+            get() = { b.nil }
+    }
+
 }
 
 object MonoidExtensions {
