@@ -4,6 +4,7 @@ import io.kotest.matchers.shouldBe
 import org.eureka.kotlin.fp.ch11.MonadInstances.optionMonad
 import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch4.Option
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -17,6 +18,11 @@ class MonadTest {
     @ArgumentsSource(SequenceListOfOptionArguments::class)
     fun `sequence a list of option`(input: List<Option<Int>>, result: Option<List<Int>>) {
         optionMonad().sequence(input) shouldBe result
+    }
+
+    @Test
+    internal fun replicateM() {
+        optionMonad().replicateM(3, Option.of(1)) shouldBe Option.of(List.of(1, 1, 1))
     }
 
     class SequenceListOfOptionArguments: ArgumentsProvider {

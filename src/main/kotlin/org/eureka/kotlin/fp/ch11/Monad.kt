@@ -38,6 +38,15 @@ interface Monad<F> : Functor<F> {
         f: (A) -> Kind<F, B>
     ): Kind<F, List<B>> =
         List.foldRight(la, unit(List.empty())) { el, fAcc -> map2(f(el), fAcc) { fEl, acc -> List.cons(fEl, acc) } }
+
+    fun <A> replicateM(n: Int, ma: Kind<F, A>): Kind<F, List<A>> =
+        map(ma) { a ->
+            var l = List.empty<A>()
+            repeat(n) {
+                l = List.cons(a, l)
+            }
+            l
+        }
 }
 
 object MonadInstances {
