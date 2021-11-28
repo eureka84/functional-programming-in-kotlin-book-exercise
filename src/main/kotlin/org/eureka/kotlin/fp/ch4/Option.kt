@@ -1,11 +1,16 @@
 package org.eureka.kotlin.fp.ch4
 
+import arrow.Kind
 import org.eureka.kotlin.fp.ch3.Cons
 import org.eureka.kotlin.fp.ch3.List
 import org.eureka.kotlin.fp.ch3.List.Companion.foldRight
 import java.lang.Exception
 
-sealed class Option<out A> {
+class ForOption
+typealias OptionOf<A> = Kind<ForOption, A>
+fun <A> OptionOf<A>.fix(): Option<A> = this as Option<A>
+
+sealed class Option<out A>: OptionOf<A> {
     companion object {
         fun <A> of(a: A): Option<A> = Some(a)
         fun <A> empty(): Option<A> = None

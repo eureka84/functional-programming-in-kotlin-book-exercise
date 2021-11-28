@@ -1,12 +1,20 @@
 package org.eureka.kotlin.fp.ch7
 
+import arrow.Kind
 import arrow.syntax.function.curried
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
-typealias Par<A> = (ExecutorService) -> Future<A>
+class ForPar
+typealias ParOf<A> = Kind<ForPar, A>
+fun <A> ParOf<A>.fix(): Par<A> = this as Par<A>
+
+fun interface Par<A>: ParOf<A> {
+    operator fun invoke(e: ExecutorService): Future<A>
+}
+//typealias Par<A> = (ExecutorService) -> Future<A>
 
 object Pars {
 
@@ -17,7 +25,7 @@ object Pars {
         fork { unit(a()) }
 
     fun <A> unit(a: A): Par<A> =
-        { _: ExecutorService -> UnitFuture(a) }
+        Par { _: ExecutorService -> UnitFuture(a) }
 
     data class UnitFuture<A>(val a: A) : Future<A> {
         override fun get(): A = a
@@ -60,7 +68,7 @@ object Pars {
         b: Par<B>,
         f: (A, B) -> C
     ): Par<C> =
-        { es: ExecutorService ->
+        Par { es: ExecutorService ->
             val af: Future<A> = a(es)
             val bf: Future<B> = b(es)
             TimedMap2Future(af, bf, f)
@@ -93,13 +101,10 @@ object Pars {
                 parC,
                 map2(
                     parA,
-                    parB,
-                    { a, b -> f.curried()(a)(b) }
-                ),
-                { c, g -> g(c) }
-            ),
-            { d: D, h -> h(d) }
-        )
+                    parB
+                ) { a, b -> f.curried()(a)(b) }
+            ) { c, g -> g(c) }
+        ) { d: D, h -> h(d) }
 
     fun <A, B, C, D, E, F> map5(
         parA: Par<A>,
@@ -128,7 +133,7 @@ object Pars {
 
 
     fun <A> fork(a: () -> Par<A>): Par<A> =
-        { es: ExecutorService ->
+        Par { es: ExecutorService ->
             es.submit(Callable {
                 val valA: Par<A> = a()
                 valA(es).get()
@@ -177,7 +182,7 @@ object Pars {
         }
     }
 
-    fun <A> choiceN(n: Par<Int>, choices: List<Par<A>>): Par<A> = { es ->
+    fun <A> choiceN(n: Par<Int>, choices: List<Par<A>>): Par<A> = Par { es ->
         run(es, choices[run(es, n).get()])
     }
 
@@ -187,9 +192,9 @@ object Pars {
     fun <K, V> choiceMap(
         key: Par<K>,
         choices: Map<K, Par<V>>
-    ): Par<V> = { es -> run(es, choices.getValue(run(es, key).get())) }
+    ): Par<V> = Par { es -> run(es, choices.getValue(run(es, key).get())) }
 
-    fun <A, B> flatMap(pa: Par<A>, choices: (A) -> Par<B>): Par<B> = { es ->
+    fun <A, B> flatMap(pa: Par<A>, choices: (A) -> Par<B>): Par<B> = Par { es ->
         run(es, choices(run(es, pa).get()))
     }
 

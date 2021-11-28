@@ -1,8 +1,13 @@
 package org.eureka.kotlin.fp.ch3
 
+import arrow.Kind
 import java.lang.UnsupportedOperationException
 
-sealed class List<out A> {
+class ForList
+typealias ListOf<A> = Kind<ForList, A>
+fun <A> ListOf<A>.fix(): List<A> = this as List<A>
+
+sealed class List<out A>: ListOf<A> {
 
     companion object {
         fun <A> of(vararg aa: A): List<A> =
