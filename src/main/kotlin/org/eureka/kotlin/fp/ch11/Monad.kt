@@ -30,11 +30,19 @@ interface Monad<F> : Functor<F> {
         fb: Kind<F, B>,
         f: (A, B) -> C
     ): Kind<F, C> = flatMap(fa) { a -> map(fb) { b -> f(a, b) } }
+
+    fun <A> sequence(lfa: List<Kind<F, A>>): Kind<F, List<A>> = traverse(lfa) { it}
+
+    fun <A, B> traverse(
+        la: List<A>,
+        f: (A) -> Kind<F, B>
+    ): Kind<F, List<B>> =
+        List.foldRight(la, unit(List.empty())) { el, fAcc -> map2(f(el), fAcc) { fEl, acc -> List.cons(fEl, acc) } }
 }
 
 object MonadInstances {
 
-    fun listMonad(): Monad<ForList>  {
+    fun listMonad(): Monad<ForList> {
         return object : Monad<ForList> {
             override fun <A> unit(a: A): ListOf<A> = List.of(a)
             override fun <A, B> flatMap(fa: ListOf<A>, f: (A) -> ListOf<B>): ListOf<B> =
@@ -43,10 +51,10 @@ object MonadInstances {
     }
 
     fun parMonad(): Monad<ForPar> {
-        return object: Monad<ForPar> {
+        return object : Monad<ForPar> {
             override fun <A> unit(a: A): ParOf<A> = Pars.unit(a)
             override fun <A, B> flatMap(fa: ParOf<A>, f: (A) -> ParOf<B>): ParOf<B> =
-                Pars.flatMap(fa.fix()) { a -> f(a).fix()}
+                Pars.flatMap(fa.fix()) { a -> f(a).fix() }
         }
     }
 
