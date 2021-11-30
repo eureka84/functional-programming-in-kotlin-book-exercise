@@ -1,8 +1,10 @@
 package org.eureka.kotlin.fp.ch11
 
+import arrow.Kind
 import io.kotest.matchers.shouldBe
 import org.eureka.kotlin.fp.ch11.MonadInstances.optionMonad
 import org.eureka.kotlin.fp.ch3.List
+import org.eureka.kotlin.fp.ch4.ForOption
 import org.eureka.kotlin.fp.ch4.Option
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -21,8 +23,23 @@ class MonadTest {
     }
 
     @Test
-    internal fun replicateM() {
+    fun replicateM() {
         optionMonad().replicateM(3, Option.of(1)) shouldBe Option.of(List.of(1, 1, 1))
+    }
+
+    @Test
+    fun filterM() {
+        optionMonad().filterM(List.of(1, 2, 3, 4, 5), isDividedBy(2)) shouldBe Option.of(List.of(2, 4))
+    }
+
+    private fun isDividedBy(divisor: Int): (Int) -> Kind<ForOption, Boolean> {
+        return { n ->
+            if (n==0) {
+                Option.empty()
+            } else {
+                Option.of(n % divisor == 0)
+            }
+        }
     }
 
     class SequenceListOfOptionArguments: ArgumentsProvider {
