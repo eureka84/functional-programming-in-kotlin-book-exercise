@@ -68,6 +68,11 @@ interface Monad<F> : Functor<F> {
                 }
         }
 
+    fun <A, B, C> compose(
+        f: (A) -> Kind<F, B>,
+        g: (B) -> Kind<F, C>
+    ): (A) -> Kind<F, C> = { a -> flatMap(f(a)) { b -> g(b) } }
+
 }
 
 object MonadInstances {
