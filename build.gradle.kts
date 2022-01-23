@@ -15,7 +15,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.20-RC")
     implementation("io.arrow-kt:arrow-core:0.11.0")
     implementation("io.arrow-kt:arrow-core-data:0.11.0")
     implementation("io.arrow-kt:arrow-mtl:0.11.0")
