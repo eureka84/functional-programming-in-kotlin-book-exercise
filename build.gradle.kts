@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 group = "org.example"
 version = "1.0-SNAPSHOT"
 description = "functional-programming-in-kotlin-book-exercises"
@@ -5,8 +7,8 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 plugins {
     java
-    id("org.jetbrains.kotlin.jvm") version "1.6.0"
     idea
+    id("org.jetbrains.kotlin.jvm") version "1.6.0"
 }
 
 repositories {
@@ -14,23 +16,33 @@ repositories {
     mavenCentral()
 }
 
+val arrowVersion = "0.11.0"
+val junitVersion = "5.8.2"
+val kotestVersion = "5.1.0"
+
 dependencies {
-    implementation("io.arrow-kt:arrow-core:0.11.0")
-    implementation("io.arrow-kt:arrow-core-data:0.11.0")
-    implementation("io.arrow-kt:arrow-mtl:0.11.0")
-    implementation("io.arrow-kt:arrow-mtl-data:0.11.0")
-    implementation("io.arrow-kt:arrow-syntax:0.11.0")
-    implementation("io.arrow-kt:arrow-fx:0.11.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.1.0")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:5.1.0")
-    testImplementation("io.kotest:kotest-property-jvm:5.1.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
+    implementation("io.arrow-kt:arrow-core:$arrowVersion")
+    implementation("io.arrow-kt:arrow-core-data:$arrowVersion")
+    implementation("io.arrow-kt:arrow-mtl:$arrowVersion")
+    implementation("io.arrow-kt:arrow-mtl-data:$arrowVersion")
+    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
+    implementation("io.arrow-kt:arrow-fx:$arrowVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
+    testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
 }
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 tasks.test {
@@ -42,12 +54,5 @@ tasks.test {
 
     reports {
         html.required.set(true)
-    }
-}
-
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
