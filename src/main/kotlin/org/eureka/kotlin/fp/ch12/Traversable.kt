@@ -26,9 +26,8 @@ object TraversableInstances {
 
     fun <A> optionTraversable(): Traversable<ForOption> = object : Traversable<ForOption> {
         override fun <G, A> sequence(fa: OptionOf<Kind<G, A>>, AG: Applicative<G>): Kind<G, OptionOf<A>> {
-            val default = AG.unit(Option.empty<A>())
-            return fa.fix().fold(default) { ga: Kind<G, A> ->
-                AG.map2(ga, default) { a, _ -> Option.some(a)}
+            return fa.fix().fold(AG.unit(Option.empty())) { ga: Kind<G, A> ->
+                AG.map2(ga, AG.unit(Unit)) { a, _ -> Option.some(a) }
             }
         }
     }
