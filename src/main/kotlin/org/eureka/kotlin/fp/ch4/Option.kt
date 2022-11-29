@@ -11,7 +11,12 @@ typealias OptionOf<A> = Kind<ForOption, A>
 fun <A> OptionOf<A>.fix(): Option<A> = this as Option<A>
 
 sealed class Option<out A>: OptionOf<A> {
+
+    fun <B> fold(default: B, f: (A) -> B): B = this.map(f).getOrElse { default }
+
     companion object {
+        fun <A> some(a: A): Option<A> = Some(a)
+        fun <A> none(): Option<A> = None
         fun <A> of(a: A): Option<A> = Some(a)
         fun <A> empty(): Option<A> = None
         fun <A, B> lift(f: (A) -> B): (Option<A>) -> Option<B> = { oa -> oa.map(f) }

@@ -3,6 +3,7 @@ package org.eureka.kotlin.fp.ch12
 import org.eureka.kotlin.fp.ch11.Functor
 
 import arrow.Kind
+import arrow.core.extensions.set.foldable.foldRight
 import org.eureka.kotlin.fp.ch2.Functions.curry
 
 interface Applicative<F> : Functor<F> {
@@ -48,4 +49,11 @@ interface Applicative<F> : Functor<F> {
         ma: Kind<F, A>,
         mb: Kind<F, B>
     ): Kind<F, Pair<A, B>> = map2(ma, mb) { a, b -> a to b }
+
+    fun <K, V> sequence(mkv: Map<K, Kind<F, V>>): Kind<F, Map<K, V>> =
+        mkv.entries.fold(unit(emptyMap())) { acc, (k, v) ->
+            map2(acc, v) { map, value ->
+                map.plus(k to value)
+            }
+        }
 }
