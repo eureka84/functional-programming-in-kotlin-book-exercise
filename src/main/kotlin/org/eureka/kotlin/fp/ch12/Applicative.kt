@@ -3,7 +3,10 @@ package org.eureka.kotlin.fp.ch12
 import org.eureka.kotlin.fp.ch11.Functor
 
 import arrow.Kind
+import arrow.core.ForId
+import arrow.core.Id
 import arrow.core.extensions.set.foldable.foldRight
+import arrow.core.value
 import org.eureka.kotlin.fp.ch2.Functions.curry
 
 interface Applicative<F> : Functor<F> {
@@ -56,4 +59,15 @@ interface Applicative<F> : Functor<F> {
                 map.plus(k to value)
             }
         }
+}
+
+object ApplicativeInstances {
+    val idApplicative: Applicative<ForId> = object : Applicative<ForId> {
+        override fun <A> unit(a: A): Kind<ForId, A> = Id(a)
+
+        override fun <A, B> apply(fab: Kind<ForId, (A) -> B>, fa: Kind<ForId, A>): Kind<ForId, B> {
+            return Id(fab.value()(fa.value()))
+        }
+
+    }
 }
